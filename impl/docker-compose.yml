@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ptk_postgres
+    environment:
+      POSTGRES_USER: ptk
+      POSTGRES_PASSWORD: ptk
+      POSTGRES_DB: postgres
+    ports:
+      - "5544:5432"
+    volumes:
+      - ptk_pg:/var/lib/postgresql/data
+      - ./infra/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ptk -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: ptk_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ptk_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  ptk_pg:
+  ptk_redis:
