@@ -36,7 +36,7 @@
     <h2>1 · Service &amp; items</h2>
 
     <div class="service-tabs">
-      {#each data.services.items as s (s.Code)}
+      {#each data.services.Items as s (s.Code)}
         <button
           type="button"
           class="tab"
@@ -52,7 +52,7 @@
         <tr><th>Item</th><th>UoM</th><th style="width:140px">Qty</th></tr>
       </thead>
       <tbody>
-        {#each data.catalog.items as it (it.id)}
+        {#each data.catalog.Items as it (it.id)}
           <tr>
             <td><strong>{it.Name}</strong> <span class="muted small">· {it.Code}</span>{#if it.IsVendorOnly} <span class="badge warn">vendor</span>{/if}</td>
             <td>{it.DefaultUom}</td>
@@ -121,14 +121,14 @@
         <div class="quote">
           <table>
             <tbody>
-              {#each form.quote.lines as l (l.itemId)}
-                <tr><td>{l.itemName} × {l.quantity}</td><td class="right">{inr(l.lineTotalInr)}</td></tr>
+              {#each form.quote.Lines as l (l.ItemId)}
+                <tr><td>{l.ItemName} × {l.Quantity}</td><td class="right">{inr(l.LineTotalInr)}</td></tr>
               {/each}
-              <tr><td>Subtotal</td><td class="right">{inr(form.quote.subtotalInr)}</td></tr>
-              <tr><td>Delivery</td><td class="right">{inr(form.quote.deliveryChargeInr)}</td></tr>
-              <tr><td>Express</td><td class="right">{inr(form.quote.expressChargeInr)}</td></tr>
-              <tr><td>GST</td><td class="right">{inr(form.quote.gstInr)}</td></tr>
-              <tr class="total"><td><strong>Total</strong></td><td class="right"><strong>{inr(form.quote.totalInr)}</strong></td></tr>
+              <tr><td>Subtotal</td><td class="right">{inr(form.quote.SubtotalInr)}</td></tr>
+              <tr><td>Delivery</td><td class="right">{inr(form.quote.DeliveryChargeInr)}</td></tr>
+              <tr><td>Express</td><td class="right">{inr(form.quote.ExpressChargeInr)}</td></tr>
+              <tr><td>GST</td><td class="right">{inr(form.quote.GstInr)}</td></tr>
+              <tr class="total"><td><strong>Total</strong></td><td class="right"><strong>{inr(form.quote.TotalInr)}</strong></td></tr>
             </tbody>
           </table>
         </div>

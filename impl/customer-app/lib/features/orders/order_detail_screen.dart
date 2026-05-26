@@ -35,10 +35,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               child: Text('Error: ${snap.error}'),
             );
           }
-          final d = snap.data!;
-          final o = (d['order'] as Map).cast<String, dynamic>();
-          final lines = (d['lines'] as List).cast<Map>();
-          final history = (d['history'] as List).cast<Map>();
+          final o = snap.data!;
+          final lines = ((o['Lines'] as List?) ?? const []).cast<Map>();
+          final history = ((o['History'] as List?) ?? const []).cast<Map>();
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [

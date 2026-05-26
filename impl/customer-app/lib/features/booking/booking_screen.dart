@@ -51,7 +51,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   List<Map<String, dynamic>> _quoteItems() => _qty.entries
       .where((e) => e.value > 0)
-      .map((e) => {'itemId': e.key, 'quantity': e.value})
+      .map((e) => {'ItemId': e.key, 'Quantity': e.value})
       .toList();
 
   Future<void> _refreshQuote() async {
@@ -65,6 +65,7 @@ class _BookingScreenState extends State<BookingScreen> {
         serviceTypeCode: _service,
         deliveryType: _delivery,
         isExpress: _express,
+        isVendor: false,
         items: items,
       );
       setState(() { _quote = q; _error = null; });
@@ -207,22 +208,22 @@ class _BookingScreenState extends State<BookingScreen> {
                           children: [
                             const Text('Price preview', style: TextStyle(fontWeight: FontWeight.w600)),
                             const SizedBox(height: 8),
-                            ...((_quote!['lines'] as List).cast<Map>()).map(
+                            ...((_quote!['Lines'] as List).cast<Map>()).map(
                               (l) => Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Expanded(child: Text('${l['itemName']} × ${l['quantity']}')),
-                                  Text(inr(l['lineTotalInr'] as num)),
+                                  Expanded(child: Text('${l['ItemName']} × ${l['Quantity']}')),
+                                  Text(inr(l['LineTotalInr'] as num)),
                                 ],
                               ),
                             ),
                             const Divider(),
-                            _row('Subtotal', inr(_quote!['subtotalInr'] as num)),
-                            _row('Delivery', inr(_quote!['deliveryChargeInr'] as num)),
-                            _row('Express', inr(_quote!['expressChargeInr'] as num)),
-                            _row('GST', inr(_quote!['gstInr'] as num)),
+                            _row('Subtotal', inr(_quote!['SubtotalInr'] as num)),
+                            _row('Delivery', inr(_quote!['DeliveryChargeInr'] as num)),
+                            _row('Express', inr(_quote!['ExpressChargeInr'] as num)),
+                            _row('GST', inr(_quote!['GstInr'] as num)),
                             const SizedBox(height: 4),
-                            _row('Total', inr(_quote!['totalInr'] as num), bold: true),
+                            _row('Total', inr(_quote!['TotalInr'] as num), bold: true),
                           ],
                         ),
                       ),

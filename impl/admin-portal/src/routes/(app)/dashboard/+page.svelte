@@ -9,14 +9,14 @@
 {#if data.error}<p class="error">{data.error}</p>{/if}
 
 <div class="kpis">
-  <div class="card kpi"><span class="muted small">Total orders</span><strong>{recent.total}</strong></div>
-  <div class="card kpi"><span class="muted small">Showing</span><strong>{recent.items.length} recent</strong></div>
+  <div class="card kpi"><span class="muted small">Total orders</span><strong>{recent.Total}</strong></div>
+  <div class="card kpi"><span class="muted small">Showing</span><strong>{recent.Items.length} recent</strong></div>
   <div class="card kpi"><a class="btn" href="/orders/new">+ New Order</a></div>
 </div>
 
 <div class="card section" style="margin-top:1.5rem">
   <h2>Recent orders</h2>
-  {#if recent.items.length === 0}
+  {#if recent.Items.length === 0}
     <p class="muted">No orders yet.</p>
   {:else}
     <table>
@@ -24,7 +24,7 @@
         <tr><th>Code</th><th>Customer</th><th>Service</th><th>Total</th><th>Status</th><th></th></tr>
       </thead>
       <tbody>
-        {#each recent.items as o (o.id)}
+        {#each recent.Items as o (o.id)}
           <tr>
             <td><strong>{o.OrderCode}</strong></td>
             <td>{o.CustomerName}<br/><span class="muted small">{o.CustomerPhone}</span></td>

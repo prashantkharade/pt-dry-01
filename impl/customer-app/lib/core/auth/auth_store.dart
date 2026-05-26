@@ -40,12 +40,12 @@ class AuthStore extends ChangeNotifier {
   }
 
   Future<void> saveLogin(Map<String, dynamic> payload) async {
-    _accessToken = payload['accessToken'] as String?;
-    _refreshToken = payload['refreshToken'] as String?;
-    final user = (payload['user'] as Map?)?.cast<String, dynamic>();
+    _accessToken = payload['AccessToken'] as String?;
+    _refreshToken = payload['RefreshToken'] as String?;
+    final user = (payload['User'] as Map?)?.cast<String, dynamic>();
     _userId = user?['id'] as String?;
-    _name = user?['firstName'] as String?;
-    _phone = user?['phone'] as String?;
+    _name = user?['FirstName'] as String?;
+    _phone = user?['Phone'] as String?;
     await _storage.write(key: _kAccess, value: _accessToken);
     await _storage.write(key: _kRefresh, value: _refreshToken);
     if (_userId != null) await _storage.write(key: _kUserId, value: _userId);

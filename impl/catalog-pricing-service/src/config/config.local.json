@@ -1,0 +1,17 @@
+{
+    "SystemIdentifier"  : "PTKharade",
+    "ServiceName"       : "catalog-pricing-service",
+    "BaseUrl"           : "http://localhost:4002",
+    "Port"              : 4002,
+    "ApiVersion"        : "v1",
+    "Logger"            : { "Provider": "Custom", "Level": "Debug" },
+    "Database"          : { "Type": "postgres", "ORM": "TypeORM" },
+    "Cache"             : { "Provider": "Redis" },
+    "MaxUploadFileSize" : 10485760,
+    "Telemetry"         : false,
+    "TemporaryFolders"  : {
+        "UploadFolder"               : "./tmp/uploads/",
+        "DownloadFolder"             : "./tmp/downloads/",
+        "CleanupFolderBeforeMinutes" : 1440
+    }
+}

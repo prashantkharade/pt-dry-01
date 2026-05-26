@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     return { result, q };
   } catch (e) {
     const err = e as { message?: string };
-    return { result: { items: [] }, q, error: err.message };
+    return { result: { Items: [], Total: 0 }, q, error: err.message };
   }
 };
 

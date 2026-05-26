@@ -17,7 +17,7 @@
     <table>
       <thead><tr><th>Name</th><th>Phone</th><th>Type</th><th>Code</th><th></th></tr></thead>
       <tbody>
-        {#each data.result.items as c (c.id)}
+        {#each data.result.Items as c (c.id)}
           <tr>
             <td><strong>{c.Name}</strong></td>
             <td>{c.Phone ?? ''}</td>
@@ -26,7 +26,7 @@
             <td><a href={"/orders/new?customerId=" + c.id}>+ New order</a></td>
           </tr>
         {/each}
-        {#if data.result.items.length === 0}
+        {#if data.result.Items.length === 0}
           <tr><td colspan="5" class="muted" style="text-align:center; padding:2rem">No customers found.</td></tr>
         {/if}
       </tbody>

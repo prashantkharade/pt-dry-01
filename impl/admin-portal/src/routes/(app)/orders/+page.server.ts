@@ -3,14 +3,17 @@ import { Orders } from '$lib/server/backend';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
   const u = locals.sessionUser!;
-  const q = url.searchParams.get('q') ?? undefined;
-  const status = url.searchParams.get('status') ?? undefined;
-  const page = url.searchParams.get('page') ?? '1';
+  const Query = url.searchParams.get('q') ?? undefined;
+  const Status = url.searchParams.get('status') ?? undefined;
+  const PageIndex = Number(url.searchParams.get('page') ?? '0');
   try {
-    const result = await Orders.listOrders(u.accessToken, { q, status, page });
-    return { result, q, status };
+    const result = await Orders.list(u.accessToken, { Query, Status, PageIndex });
+    return { result, q: Query, status: Status };
   } catch (e) {
     const err = e as { message?: string };
-    return { result: { items: [], total: 0, page: 1, pageSize: 25 }, q, status, error: err.message };
+    return {
+      result: { Items: [], Total: 0, PageIndex: 0, ItemsPerPage: 25 },
+      q: Query, status: Status, error: err.message,
+    };
   }
 };

@@ -29,7 +29,7 @@
       <tr><th>Code</th><th>Customer</th><th>Service</th><th>Channel</th><th>Total</th><th>Status</th><th>Created</th><th></th></tr>
     </thead>
     <tbody>
-      {#each data.result.items as o (o.id)}
+      {#each data.result.Items as o (o.id)}
         <tr>
           <td><strong>{o.OrderCode}</strong></td>
           <td>{o.CustomerName}<br/><span class="muted small">{o.CustomerPhone}</span></td>
@@ -41,7 +41,7 @@
           <td><a href="/orders/{o.id}">Open →</a></td>
         </tr>
       {/each}
-      {#if data.result.items.length === 0}
+      {#if data.result.Items.length === 0}
         <tr><td colspan="8" class="muted" style="text-align:center; padding: 2rem">No orders found.</td></tr>
       {/if}
     </tbody>

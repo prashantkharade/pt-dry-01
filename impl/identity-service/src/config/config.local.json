@@ -1,0 +1,27 @@
+{
+    "SystemIdentifier"     : "PTKharade",
+    "ServiceName"          : "identity-service",
+    "BaseUrl"              : "http://localhost:4001",
+    "Port"                 : 4001,
+    "ApiVersion"           : "v1",
+    "Logger"               : { "Provider": "Custom", "Level": "Debug" },
+    "Database"             : { "Type": "postgres", "ORM": "TypeORM" },
+    "Cache"                : { "Provider": "Redis" },
+    "Authentication"       : { "Provider": "Custom" },
+    "Authorization"        : { "Provider": "Custom" },
+    "Sms"                  : { "Provider": "MSG91" },
+    "Email"                : { "Provider": "SMTP" },
+    "MobileNotification"   : { "Provider": "Firebase" },
+    "MaxUploadFileSize"    : 10485760,
+    "Telemetry"            : false,
+    "TemporaryFolders"     : {
+        "UploadFolder"               : "./tmp/uploads/",
+        "DownloadFolder"             : "./tmp/downloads/",
+        "CleanupFolderBeforeMinutes" : 1440
+    },
+    "Auth": {
+        "AccessTokenExpiresInSeconds"  : 3600,
+        "RefreshTokenExpiresInSeconds" : 2592000,
+        "OtpValidityInMinutes"         : 5
+    }
+}

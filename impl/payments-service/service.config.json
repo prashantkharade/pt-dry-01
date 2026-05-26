@@ -1,0 +1,19 @@
+{
+    "SystemIdentifier"     : "PTKharade",
+    "ServiceName"          : "payments-service",
+    "BaseUrl"              : "http://localhost:4004",
+    "ApiVersion"           : "v1",
+    "Logging"              : { "Provider": "Custom", "Level": "Information" },
+    "TemporaryFolders"     : {
+        "UploadFolder"               : "./tmp/uploads/",
+        "DownloadFolder"             : "./tmp/downloads/",
+        "CleanupFolderBeforeMinutes" : 1440
+    },
+    "Authentication"       : { "Provider": "Custom" },
+    "Authorization"        : { "Provider": "Custom" },
+    "Database"             : { "Type": "PostgreSQL", "ORM": "TypeORM" },
+    "Cache"                : { "Provider": "Redis" },
+    "Payments"             : { "Primary": "Razorpay", "Secondary": "Zohopay" },
+    "MaxUploadFileSize"    : 10485760,
+    "Telemetry"            : false
+}
