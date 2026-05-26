@@ -19,19 +19,19 @@ export const actions: Actions = {
     try {
       const result = await Identity.login(emailOrPhone, password);
       const sessionId = randomUUID();
-      const u = result.user as Record<string, unknown>;
+      const u = result.User as Record<string, unknown>;
       SessionStore.set(sessionId, {
         userId: String(u.id),
-        firstName: String(u.firstName ?? ''),
-        lastName: u.lastName as string | undefined,
-        email: u.email as string | undefined,
-        phone: u.phone as string | undefined,
-        tenantId: String(u.tenantId),
-        branchId: String(u.branchId),
-        roles: (u.roles as string[]) ?? [],
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
-        preferredLanguage: (u.preferredLanguage as string) ?? 'en',
+        firstName: String(u.FirstName ?? ''),
+        lastName: u.LastName as string | undefined,
+        email: u.Email as string | undefined,
+        phone: u.Phone as string | undefined,
+        tenantId: String(u.TenantId),
+        branchId: String(u.BranchId),
+        roles: (u.Roles as string[]) ?? [],
+        accessToken: result.AccessToken,
+        refreshToken: result.RefreshToken,
+        preferredLanguage: (u.PreferredLanguage as string) ?? 'en',
       });
       cookies.set(COOKIE_NAME, sessionId, {
         path: '/',

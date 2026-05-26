@@ -1,178 +1,294 @@
-# PT Kharade — Vertical Slice Implementation
+# PT Kharade Drycleaners & Laundry — Implementation
 
-A working slice of the PT Kharade Drycleaners & Laundry platform across all
-three layers: **two backend microservices**, the **SvelteKit admin portal**,
-and the **Flutter customer app**.
-
-This is a focused vertical slice — auth + an order intake flow end-to-end —
-rather than a complete implementation of every feature in the guides. It is
-designed to *actually run*, with a real Postgres + Redis, real JWTs, real
-order pricing and status machine. See **What's in the slice** below for the
-exact scope.
-
-## Layout
+Flat layout: every microservice, the admin portal and the customer app live
+directly under `impl/` and run independently. There is no monorepo and no
+workspace package — each service has its own `package.json`, `node_modules`,
+`.env`, `Dockerfile` and entrypoint.
 
 ```
 impl/
-├── docker-compose.yml             Postgres 16 + Redis 7
-├── .env  /  .env.example
-├── infra/init-db.sql              Bootstrap identity_db / orders_db / notifications_db
-├── backend/
-│   ├── packages/shared/           Shared TS lib: logger, ApiError, ResponseHandler,
-│   │                              ConfigurationManager, JWT, auth middleware
-│   └── services/
-│       ├── identity-service/      Auth (OTP + password), users, customers, RBAC
-│       └── orders-service/        Catalog, rate cards, pricing, orders + state machine
-├── admin-portal/                  SvelteKit 2 + Svelte 5 (runes)
-│   ├── src/routes/signin/
-│   ├── src/routes/(app)/
-│   │   ├── dashboard/
-│   │   ├── orders/(list, new, [id])
-│   │   └── customers/
-│   └── src/lib/server/backend.ts  Two-tier API client (BFF → service wrapper)
-└── customer-app/                  Flutter (Android/iOS/web from one codebase)
-    └── lib/
-        ├── core/api/api_client.dart
-        ├── core/auth/auth_store.dart      flutter_secure_storage
-        └── features/{splash,auth,home,booking,orders}/
+├── docker-compose.yml              shared infra: Postgres 16 + Redis 7
+├── infra/init-db.sql               bootstraps the 5 per-service databases
+├── identity-service/               :4001  auth, users, customers, tenants, branches, RBAC
+├── catalog-pricing-service/        :4002  items, rate cards, surcharges, /pricing/quote
+├── orders-service/                 :4003  orders, status workflow, bills
+├── payments-service/               :4004  Razorpay / Zohopay + webhooks
+├── notifications-service/          :4005  SMS / Email / WhatsApp / FCM
+├── admin-portal/                   :5173  SvelteKit 2 + Svelte 5 (runes), SSR
+└── customer-app/                          Flutter (Android / iOS / web)
 ```
 
-## What's in the slice
+The backend layout follows the canonical Express + TypeORM + tsyringe pattern
+used across our sister projects (Batterlicious, charqol, kleo): a singleton
+`Application` bootstrap, per-domain `api/{domain}/{controller, routes,
+validator, auth}`, a `database/typeorm/{models, services, mappers}` tree, a
+thin `common/` for errors and response envelopes, and a `startup/` group
+(Loader, Injector, Router, Seeder, Scheduler).
 
-**Working end-to-end (verified via smoke test):**
+### Per-service canonical tree
 
-- Postgres (Docker) seeded with one tenant `PT Kharade Group of Industries`,
-  one branch `Mukundnagar Shop`, four roles, a SystemAdmin user, and the
-  BRIEF §2.3 catalog + rate cards + surcharges.
-- Identity service: password login, OTP send/verify (dev mode returns OTP in
-  the response), `/users/me`, customer CRUD with phone-uniqueness, address
-  capture.
-- Orders service: catalog endpoints, `/pricing/quote` that resolves retail or
-  vendor rates with home-delivery (₹40 flat) and express (+25%) surcharges,
-  `/orders` create that calls identity for customer lookup via `x-api-key`,
-  paginated order list, order detail with status history, status machine
-  (`Booked → PickedUp → Received → InProcess → Ready → OutForDelivery →
-  Delivered → Closed`, plus `Cancelled` / `OnHold`).
-- Admin portal: cookie session, login form, sidebar shell, dashboard KPIs,
-  searchable orders list, **new-order intake page** (service tabs, item
-  selector, channel/delivery toggles, express, quote preview, place), order
-  detail with status transitions, customer search + create.
-- Customer app: OTP login, home with service tiles, **booking screen** with
-  the same item picker + quote preview as the admin portal, my-orders list,
-  order detail with timeline.
-
-**Out of scope for this slice (planned in the guides, not built here):**
-
-- Notifications service (SMS/email/WhatsApp/FCM, templates) — code stubbed in
-  identity-service as `OtpService` writing to Redis only.
-- Subscriptions, vendor B2B credit floors, wallet, discounts, settlements,
-  delivery zones/slots, processing batches.
-- Razorpay / Zoho Pay — order is created in `Booked` with no online payment.
-  Adding the gateway is one new service file plus a webhook route.
-- Marathi i18n (the data has `NameMr` fields seeded; the UI shows English only).
-- Theming page, offline service worker, audit log UI.
-- MFA, OAuth, device tracking.
-- TypeORM migrations (the slice uses `synchronize: true`).
+```
+<service-name>/
+├── Dockerfile, entrypoint.sh, service.config.json
+├── package.json, tsconfig.json, README.md
+├── .env, .env.example
+└── src/
+    ├── index.ts                       dotenv + reflect-metadata + Application.start()
+    ├── app.ts                         Singleton Application
+    ├── @types/express/index.d.ts      Request.currentUser augmentation
+    ├── api/{domain}/                  controller.ts, routes.ts, validator.ts, auth.ts
+    ├── auth/                          user.auth/ + client.app.auth/ + context.handler.ts
+    ├── common/                        api.error.ts, http.status.codes.ts, handlers/
+    ├── config/                        configuration.manager.ts + config.json + config.local.json
+    ├── database/
+    │   ├── database.connector.ts
+    │   ├── database.config.ts
+    │   └── typeorm/
+    │       ├── typeorm.database.connector.ts
+    │       ├── models/                {name}.model.ts (entities)
+    │       ├── mappers/               static toDto(entity) → DTO
+    │       └── services/              {name}.service.ts (extends BaseService)
+    ├── domain.types/                  enums/ + DTOs per domain
+    ├── events/event.initializer.ts
+    ├── logger/logger.ts               Winston + DailyRotateFile in prod
+    ├── middlewares/                   common.middlewares.ts, error.handling.middleware.ts
+    ├── modules/                       module.injector.ts + plug-in adapters
+    └── startup/                       injector, loader, route.handler, seeder, scheduler
+```
 
 ## Prerequisites
 
-- Node 20+
-- Docker Desktop (for Postgres + Redis)
+- Node 22+
 - Flutter 3.22+ (only required to run the customer app)
+- Postgres / MySQL / Docker — **optional**. Each service defaults to **SQLite**
+  (file-backed, no infra). Bring up real DBs only if you want them.
 
-A local Postgres on port 5432 will collide — that's why the container is
-mapped to host port **5544** (override in `.env`).
+## Database — pick your dialect
 
-## Run
+Each service reads `DB_DIALECT` from its own `.env`. Supported values:
 
-```powershell
-cd e:\WORK\PTDRY\impl
+| Dialect    | Infra required          | Default file / DB                                |
+| ---------- | ----------------------- | ------------------------------------------------ |
+| `sqlite`   | nothing — zero install  | `./data/<service>.sqlite` per service            |
+| `postgres` | Postgres 14+ on :5432   | `identity_db`, `catalog_pricing_db`, …           |
+| `mysql`    | MySQL 8+ on :3306       | same five database names                         |
 
-# 1) Install once
-npm install
+Schema is auto-created (`DB_SYNC=true`) so you do **not** need to run a
+migration. To switch dialects later: edit one line in the service's `.env`,
+restart, done. Each service is fully self-contained — they don't share a DB.
 
-# 2) Copy env (defaults are fine for dev)
-copy .env.example .env
+### Optional: bring up Postgres + Redis via Docker
 
-# 3) Start Postgres + Redis
-npm run up                # docker compose up -d
-
-# 4) Run the two backend services (separate terminals)
-npm run identity:dev      # http://localhost:4001
-npm run orders:dev        # http://localhost:4002   (waits 1s for identity)
-
-# 5) Run the admin portal
-cd admin-portal
-copy .env.example .env
-npm run dev               # http://localhost:5173
-
-# 6) (Optional) Run the Flutter app
-cd ..\customer-app
-flutter pub get
-flutter run               # picks an attached device or emulator
+```bash
+cd impl
+docker compose up -d              # Postgres :5544, Redis :6379
+docker compose logs -f postgres
+docker compose down
 ```
 
-## Verified smoke test
+`infra/init-db.sql` creates the five per-service databases on first boot.
+If you use this, set `DB_DIALECT=postgres` and `DB_PORT=5544` in each
+service's `.env` (or use the URL form: `postgres://ptk:ptk@localhost:5544/<db>`).
+
+### Optional: run with MySQL
+
+1. Install MySQL locally (or `docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=ptk mysql:8`).
+2. Create the five databases:
+   ```sql
+   CREATE DATABASE identity_db;
+   CREATE DATABASE catalog_pricing_db;
+   CREATE DATABASE orders_db;
+   CREATE DATABASE payments_db;
+   CREATE DATABASE notifications_db;
+   CREATE USER 'ptk'@'%' IDENTIFIED BY 'ptk';
+   GRANT ALL ON *.* TO 'ptk'@'%';
+   ```
+3. In each service's `.env`, set:
+   ```
+   DB_DIALECT=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_USER=ptk
+   DB_PASSWORD=ptk
+   ```
+4. `npm install` re-runs (mysql2 driver is already in package.json).
+
+## Run a microservice independently
+
+Every service is fully standalone — no Docker, no Redis, no Postgres needed
+in the default SQLite mode. From its own directory:
+
+```bash
+cd impl/<service-name>
+cp .env.example .env              # only the first time (already populated)
+npm install
+npm run dev                       # tsx watch — picks up file changes
+```
+
+The five backend services:
+
+| Service                     | Port | Health-check URL                           |
+| --------------------------- | ---- | ------------------------------------------ |
+| identity-service            | 4001 | http://localhost:4001/health-check         |
+| catalog-pricing-service     | 4002 | http://localhost:4002/health-check         |
+| orders-service              | 4003 | http://localhost:4003/health-check         |
+| payments-service            | 4004 | http://localhost:4004/health-check         |
+| notifications-service       | 4005 | http://localhost:4005/health-check         |
+
+Startup order (because seeders in catalog-pricing / orders / notifications call
+identity-service to discover the seeded tenant):
+
+1. `identity-service` (wait for `seed complete`)
+2. `catalog-pricing-service`, `orders-service`, `payments-service`,
+   `notifications-service` — can run in parallel after step 1.
+
+Redis is **optional** — if `REDIS_URL` is not set, OTPs and sessions live in
+an in-process in-memory cache (fine for single-instance dev, NOT for
+multi-replica prod).
+
+For production: `npm run build` then `npm run start` (PM2 is bundled in the
+Dockerfile).
+
+## Inspect the database
+
+### SQLite (default)
+
+The DB file lives at `<service>/data/<name>.sqlite`. Open it with any SQLite
+viewer:
+
+- **DB Browser for SQLite** — <https://sqlitebrowser.org/> (free, GUI).
+- **TablePlus** / **DBeaver** — both support SQLite natively.
+- **VS Code extension** — "SQLite Viewer" by Florian Klampfer.
+- **CLI**:
+  ```powershell
+  npx sqlite3 .\identity-service\data\identity.sqlite ".tables"
+  npx sqlite3 .\identity-service\data\identity.sqlite "select * from users;"
+  ```
+
+### Postgres
+
+If you started Postgres via `docker compose up -d`:
+
+```powershell
+# 1. Open psql inside the container
+docker exec -it ptk_postgres psql -U ptk identity_db
+
+# Useful psql commands once inside:
+\l            -- list databases
+\c orders_db  -- switch to another database
+\dt           -- list tables
+select * from users;
+\q            -- quit
+```
+
+GUI tools:
+- **pgAdmin 4** — <https://www.pgadmin.org/download/>
+  Connect with: host `127.0.0.1`, port `5544`, user `ptk`, password `ptk`.
+- **DBeaver** — universal client; same connection details.
+- **TablePlus** — paid but excellent on Windows.
+- **VS Code** — install "PostgreSQL" by Chris Kolkman, then connect to
+  `127.0.0.1:5544` with `ptk` / `ptk`.
+
+Connection string template:
+```
+postgres://ptk:ptk@127.0.0.1:5544/identity_db
+postgres://ptk:ptk@127.0.0.1:5544/catalog_pricing_db
+postgres://ptk:ptk@127.0.0.1:5544/orders_db
+postgres://ptk:ptk@127.0.0.1:5544/payments_db
+postgres://ptk:ptk@127.0.0.1:5544/notifications_db
+```
+
+### MySQL
+
+GUI: **MySQL Workbench** (<https://dev.mysql.com/downloads/workbench/>),
+**DBeaver**, or **TablePlus**.
+
+CLI:
+```powershell
+mysql -h 127.0.0.1 -P 3306 -u ptk -p
+# password: ptk
+USE identity_db;
+SHOW TABLES;
+SELECT * FROM users;
+```
+
+## Frontends
+
+```bash
+# Admin portal (SvelteKit)
+cd impl/admin-portal
+cp .env.example .env
+npm install
+npm run dev                       # http://localhost:5173
+
+# Customer app (Flutter)
+cd impl/customer-app
+flutter pub get
+flutter run -d chrome             # web
+flutter run                       # Android / iOS device
+```
+
+## Default seeded admin
+
+```
+Email    : admin@ptkharade.in
+Phone    : +919999900001
+Password : Admin@12345
+```
+
+Override with `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PHONE`, `SEED_ADMIN_PASSWORD`
+in `identity-service/.env`.
+
+For the customer app's OTP login, in dev the `POST /api/v1/auth/otp/send`
+response includes the generated OTP as `Data.DevOtp` so end-to-end testing
+works without an SMS gateway.
+
+## Smoke test (after all services are up)
 
 ```bash
 # 1. Login as the seeded SystemAdmin
 TOKEN=$(curl -s -X POST -H 'content-type: application/json' \
-  -d '{"emailOrPhone":"admin@ptkharade.in","password":"Admin@12345"}' \
-  http://localhost:4001/auth/login | jq -r .Data.accessToken)
+  -d '{"EmailOrPhone":"admin@ptkharade.in","Password":"Admin@12345"}' \
+  http://localhost:4001/api/v1/auth/login | jq -r .Data.AccessToken)
 
 # 2. Create a customer
 curl -X POST -H "authorization: Bearer $TOKEN" -H 'content-type: application/json' \
   -d '{"Name":"Rohan Patil","Phone":"+919876543210","CustomerType":"Retail"}' \
-  http://localhost:4001/customers
+  http://localhost:4001/api/v1/customers
 
-# 3. List items for Dry Clean, pick the SHIRT id
+# 3. List Dry-Clean items from the catalog service
 curl -H "authorization: Bearer $TOKEN" \
-  'http://localhost:4002/catalog/items?service=DRY_CLEAN'
+  'http://localhost:4002/api/v1/catalog/items?Service=DRY_CLEAN'
 
 # 4. Place an order: 3 shirts, home delivery, express
 curl -X POST -H "authorization: Bearer $TOKEN" -H 'content-type: application/json' \
-  -d '{"customerId":"<id>","serviceTypeCode":"DRY_CLEAN","channel":"DropAtShop",
-       "deliveryType":"HomeDelivery","isExpress":true,
-       "items":[{"itemId":"<shirt-id>","quantity":3}]}' \
-  http://localhost:4002/orders
+  -d '{"CustomerId":"<id>","ServiceTypeCode":"DRY_CLEAN","Channel":"DropAtShop",
+       "DeliveryType":"HomeDelivery","IsExpress":true,
+       "Items":[{"ItemId":"<shirt-id>","Quantity":3}]}' \
+  http://localhost:4003/api/v1/orders
 # → 3 × ₹50 = ₹150 subtotal + ₹40 delivery + 25% express = ₹227.50
 ```
 
-The admin portal `/dashboard` will show this order in its "Recent orders"
-table within seconds.
+## Conventions
 
-## Default credentials
+- **Response envelope:** every endpoint returns
+  `{ Status, Message, HttpCode, Data, Errors?, ApiVersion, ServiceName }`.
+- **Errors:** services throw `ApiError` via `ErrorHandler.throw*`; the global
+  error middleware maps to the envelope.
+- **Auth:** `Authorization: Bearer <jwt>` for user calls; sister services add
+  `x-api-key: <seeded key>` per `client_apps` seed.
+- **DI:** `tsyringe` — services are `@injectable()` singletons registered in
+  `modules/module.injector.ts` and resolved via `container.resolve(...)` in
+  controllers.
+- **Validation:** Joi schemas in `{domain}.validator.ts`; controllers stay
+  free of validation concerns.
+- **DB:** TypeORM `synchronize: true` in dev (set `DB_SYNC=false` and switch
+  to migrations for prod). Entity column names use PascalCase to match the
+  wire format.
 
-- **SystemAdmin (admin portal):** `admin@ptkharade.in` / `Admin@12345`
-- **Customer app OTP:** in dev mode the OTP is returned in the
-  `POST /auth/otp/send` response body as `devOtp` (also logged by the
-  identity-service). Use it on the OTP screen.
+## Out-of-scope (planned, scaffolded)
 
-## Architecture notes (from the guides)
-
-The slice respects the conventions from
-[`../IMPLEMENTATION-GUIDE.md`](../IMPLEMENTATION-GUIDE.md) §7:
-
-- Per-service `src/{api,database,services,startup}` layout (collapsed: no
-  separate `mappers/` folder yet — would split out in phase 2).
-- Joi validators colocated with controllers; all responses through
-  `ResponseHandler.success/.failure`.
-- Custom `ApiError` is the only thrown error from services; the global error
-  middleware maps it to the response envelope.
-- JWT access (1h) + refresh (30d), session id mirrored to Redis for revocation.
-- Inter-service calls carry `x-api-key` (admin portal key, customer app key,
-  orders-service key — all seeded into `client_apps`).
-- Order status transitions are enforced by `STATUS_NEXT` in
-  `orders.service.ts` — invalid moves return 409.
-
-## Next steps (matching BRIEF phases)
-
-| Phase | What to add to this slice |
-|-------|---------------------------|
-| 1     | TypeORM migrations; replace Redis-backed sessions with a proper `SessionManager`; permissions seed + role-permission cache. |
-| 2     | Bills + invoice PDF (pdfkit); order activity log; print-friendly `+page@.svelte` invoice/label. |
-| 3     | Razorpay gateway + state machine; webhook endpoints + idempotency middleware. |
-| 4     | Subscriptions (pause/resume/DoW), vendor settlements, wallet. |
-| 5     | Notifications service (MSG91 SMS, SES email, FCM push, in-app), Marathi templates. |
-| 6     | paraglide-js i18n in admin portal; flutter_localizations in app; theming page persisted to `users.ThemePrefs`. |
-| 7     | OpenTelemetry tracing; Bruno collections; Playwright E2E + integration tests. |
+- BullMQ-on-Redis fan-out for notifications (queue worker is stubbed).
+- TypeORM migrations (currently `synchronize: true` per-service).
+- Marathi UI rendering (the data has `NameMr` fields; the UI shows English).
+- OpenTelemetry tracing, audit log UI, theming page, offline-first PWA.

@@ -5,23 +5,41 @@ import 'core/auth/auth_store.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  const apiBase = String.fromEnvironment(
-    'API_BASE',
-    defaultValue: 'http://10.0.2.2:4001', // Android emulator → host loopback
+
+  // Android emulator → host loopback is 10.0.2.2. iOS sim / web / desktop use
+  // localhost. Override at build time with --dart-define if testing remotely.
+  const identityBase = String.fromEnvironment(
+    'IDENTITY_BASE',
+    defaultValue: 'http://10.0.2.2:4001',
+  );
+  const catalogPricingBase = String.fromEnvironment(
+    'CATALOG_PRICING_BASE',
+    defaultValue: 'http://10.0.2.2:4002',
   );
   const ordersBase = String.fromEnvironment(
     'ORDERS_BASE',
-    defaultValue: 'http://10.0.2.2:4002',
+    defaultValue: 'http://10.0.2.2:4003',
+  );
+  const paymentsBase = String.fromEnvironment(
+    'PAYMENTS_BASE',
+    defaultValue: 'http://10.0.2.2:4004',
+  );
+  const notificationsBase = String.fromEnvironment(
+    'NOTIFICATIONS_BASE',
+    defaultValue: 'http://10.0.2.2:4005',
   );
   const apiKey = String.fromEnvironment(
     'API_KEY',
-    defaultValue: 'customer-app-dev-key',
+    defaultValue: 'dev-customer-app-key',
   );
 
   ApiClient.configure(
-    identityBase: apiBase,
-    ordersBase: ordersBase,
-    apiKey: apiKey,
+    identityBase       : identityBase,
+    catalogPricingBase : catalogPricingBase,
+    ordersBase         : ordersBase,
+    paymentsBase       : paymentsBase,
+    notificationsBase  : notificationsBase,
+    apiKey             : apiKey,
   );
   await AuthStore.instance.loadFromDisk();
 

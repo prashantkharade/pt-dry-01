@@ -1,7 +1,10 @@
-// HTTP wrappers around the two backend services. Server-only.
-const IDENTITY = process.env.IDENTITY_API_URL ?? 'http://localhost:4001';
-const ORDERS = process.env.ORDERS_API_URL ?? 'http://localhost:4002';
-const API_KEY = process.env.API_KEY_ADMIN_PORTAL ?? 'admin-portal-dev-key';
+// HTTP wrappers around the PT Kharade backend microservices. Server-only.
+const IDENTITY         = process.env.IDENTITY_SERVICE_URL         ?? 'http://localhost:4001';
+const CATALOG_PRICING  = process.env.CATALOG_PRICING_SERVICE_URL  ?? 'http://localhost:4002';
+const ORDERS           = process.env.ORDERS_SERVICE_URL           ?? 'http://localhost:4003';
+const PAYMENTS         = process.env.PAYMENTS_SERVICE_URL         ?? 'http://localhost:4004';
+const NOTIFICATIONS    = process.env.NOTIFICATIONS_SERVICE_URL    ?? 'http://localhost:4005';
+const API_KEY          = process.env.API_KEY_ADMIN_PORTAL         ?? 'dev-admin-portal-key';
 
 interface CallOptions {
   method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
@@ -11,7 +14,7 @@ interface CallOptions {
 }
 
 async function call<T>(baseUrl: string, path: string, opts: CallOptions = {}): Promise<T> {
-  const url = new URL(path, baseUrl);
+  const url = new URL(`/api/v1${path}`, baseUrl);
   if (opts.query) {
     for (const [k, v] of Object.entries(opts.query)) {
       if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, String(v));
@@ -44,41 +47,58 @@ async function call<T>(baseUrl: string, path: string, opts: CallOptions = {}): P
 
 export const Identity = {
   login: (emailOrPhone: string, password: string) =>
-    call<{ accessToken: string; refreshToken: string; user: Record<string, unknown> }>(IDENTITY, '/auth/login', {
-      method: 'POST',
-      body: { emailOrPhone, password },
-    }),
-  me: (accessToken: string) => call<Record<string, unknown>>(IDENTITY, '/users/me', { accessToken }),
+    call<{ AccessToken: string; RefreshToken: string; User: Record<string, unknown> }>(
+      IDENTITY, '/auth/login', { method: 'POST', body: { EmailOrPhone: emailOrPhone, Password: password } },
+    ),
+  me: (accessToken: string) =>
+    call<Record<string, unknown>>(IDENTITY, '/users/me', { accessToken }),
   searchCustomers: (accessToken: string, q?: string) =>
-    call<{ items: Array<Record<string, unknown>> }>(IDENTITY, '/customers', { accessToken, query: { q } }),
+    call<{ Items: Array<Record<string, unknown>>; Total: number }>(
+      IDENTITY, '/customers', { accessToken, query: { Query: q } },
+    ),
   createCustomer: (accessToken: string, body: Record<string, unknown>) =>
     call<Record<string, unknown>>(IDENTITY, '/customers', { method: 'POST', body, accessToken }),
   getCustomer: (accessToken: string, id: string) =>
     call<Record<string, unknown>>(IDENTITY, `/customers/${id}`, { accessToken }),
 };
 
-export const Orders = {
-  catalog: (accessToken: string, service?: string) =>
-    call<{ items: Array<{ id: string; Code: string; Name: string; ApplicableServices: string[]; DefaultUom: string; IsVendorOnly: boolean }> }>(
-      ORDERS, '/catalog/items', { accessToken, query: { service } },
-    ),
+export const Catalog = {
   services: (accessToken: string) =>
-    call<{ items: Array<{ Code: string; Name: string; NameMr?: string }> }>(ORDERS, '/catalog/service-types', { accessToken }),
-  quote: (accessToken: string, body: unknown) =>
-    call<{ lines: Array<{ itemId: string; itemCode: string; itemName: string; quantity: number; unitRateInr: number; lineTotalInr: number }>;
-      subtotalInr: number; deliveryChargeInr: number; expressChargeInr: number; gstInr: number; totalInr: number; }>(
-      ORDERS, '/pricing/quote', { method: 'POST', body, accessToken },
+    call<{ Items: Array<{ Code: string; Name: string; NameMr?: string }>; Total: number }>(
+      CATALOG_PRICING, '/catalog/service-types', { accessToken },
     ),
-  listOrders: (accessToken: string, q?: Record<string, string | number | undefined>) =>
-    call<{ items: Array<Record<string, unknown>>; total: number; page: number; pageSize: number }>(
+  items: (accessToken: string, service?: string) =>
+    call<{ Items: Array<{ id: string; Code: string; Name: string; ApplicableServices: string[]; DefaultUom: string; IsVendorOnly: boolean }>; Total: number }>(
+      CATALOG_PRICING, '/catalog/items', { accessToken, query: { Service: service } },
+    ),
+  quote: (accessToken: string, body: unknown) =>
+    call<{
+      Lines: Array<{ ItemId: string; ItemCode: string; ItemName: string; Quantity: number; UnitRateInr: number; LineTotalInr: number }>;
+      SubtotalInr: number; DeliveryChargeInr: number; ExpressChargeInr: number; GstInr: number; TotalInr: number;
+    }>(CATALOG_PRICING, '/pricing/quote', { method: 'POST', body, accessToken }),
+};
+
+export const Orders = {
+  list: (accessToken: string, q?: Record<string, string | number | undefined>) =>
+    call<{ Items: Array<Record<string, unknown>>; Total: number; PageIndex: number; ItemsPerPage: number }>(
       ORDERS, '/orders', { accessToken, query: q },
     ),
-  createOrder: (accessToken: string, body: unknown) =>
+  create: (accessToken: string, body: unknown) =>
     call<Record<string, unknown>>(ORDERS, '/orders', { method: 'POST', body, accessToken }),
-  getOrder: (accessToken: string, id: string) =>
-    call<{ order: Record<string, unknown>; lines: Array<Record<string, unknown>>; history: Array<Record<string, unknown>> }>(
-      ORDERS, `/orders/${id}`, { accessToken },
-    ),
+  get: (accessToken: string, id: string) =>
+    call<Record<string, unknown>>(ORDERS, `/orders/${id}`, { accessToken }),
   updateStatus: (accessToken: string, id: string, status: string, note?: string) =>
-    call<Record<string, unknown>>(ORDERS, `/orders/${id}/status`, { method: 'PATCH', accessToken, body: { status, note } }),
+    call<Record<string, unknown>>(ORDERS, `/orders/${id}/status`, { method: 'PATCH', accessToken, body: { Status: status, Note: note } }),
+};
+
+export const Payments = {
+  initiate: (accessToken: string, body: unknown) =>
+    call<Record<string, unknown>>(PAYMENTS, '/payments/initiate', { method: 'POST', body, accessToken }),
+  cash: (accessToken: string, body: unknown) =>
+    call<Record<string, unknown>>(PAYMENTS, '/payments/cash', { method: 'POST', body, accessToken }),
+};
+
+export const Notifications = {
+  send: (accessToken: string, body: unknown) =>
+    call<Record<string, unknown>>(NOTIFICATIONS, '/notifications/send', { method: 'POST', body, accessToken }),
 };

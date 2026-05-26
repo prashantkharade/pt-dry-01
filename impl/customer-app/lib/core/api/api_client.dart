@@ -12,17 +12,26 @@ class ApiException implements Exception {
 
 class ApiClient {
   static late String identityBase;
+  static late String catalogPricingBase;
   static late String ordersBase;
+  static late String paymentsBase;
+  static late String notificationsBase;
   static late String apiKey;
 
   static void configure({
     required String identityBase,
+    required String catalogPricingBase,
     required String ordersBase,
+    String? paymentsBase,
+    String? notificationsBase,
     required String apiKey,
   }) {
-    ApiClient.identityBase = identityBase;
-    ApiClient.ordersBase = ordersBase;
-    ApiClient.apiKey = apiKey;
+    ApiClient.identityBase         = identityBase;
+    ApiClient.catalogPricingBase   = catalogPricingBase;
+    ApiClient.ordersBase           = ordersBase;
+    ApiClient.paymentsBase         = paymentsBase ?? '';
+    ApiClient.notificationsBase    = notificationsBase ?? '';
+    ApiClient.apiKey               = apiKey;
   }
 
   static Future<Map<String, dynamic>> _call(
@@ -33,7 +42,7 @@ class ApiClient {
     Map<String, String>? query,
     bool auth = false,
   }) async {
-    final uri = Uri.parse('$base$path').replace(
+    final uri = Uri.parse('$base/api/v1$path').replace(
       queryParameters: query == null || query.isEmpty ? null : query,
     );
     final headers = <String, String>{
@@ -71,9 +80,11 @@ class ApiClient {
       _call(base, 'PATCH', path, body: body, auth: auth).then((m) => m['Data']);
 
   // ---- Auth ----
-  static Future<void> otpSend(String phone) => _post(identityBase, '/auth/otp/send', {'phone': phone});
+  static Future<void> otpSend(String phone) =>
+      _post(identityBase, '/auth/otp/send', {'Phone': phone});
+
   static Future<Map<String, dynamic>> otpVerify(String phone, String otp) async {
-    final res = await _post(identityBase, '/auth/otp/verify', {'phone': phone, 'otp': otp});
+    final res = await _post(identityBase, '/auth/otp/verify', {'Phone': phone, 'Otp': otp});
     return (res as Map).cast<String, dynamic>();
   }
 
@@ -82,28 +93,31 @@ class ApiClient {
     return (r as Map).cast<String, dynamic>();
   }
 
-  // ---- Catalog & pricing ----
+  // ---- Catalog & pricing (catalog-pricing-service) ----
   static Future<List<Map<String, dynamic>>> services() async {
-    final r = await _get(ordersBase, '/catalog/service-types', auth: true);
-    return ((r as Map)['items'] as List).cast<Map<String, dynamic>>();
+    final r = await _get(catalogPricingBase, '/catalog/service-types', auth: true);
+    return ((r as Map)['Items'] as List).cast<Map<String, dynamic>>();
   }
 
   static Future<List<Map<String, dynamic>>> items(String serviceCode) async {
-    final r = await _get(ordersBase, '/catalog/items', query: {'service': serviceCode}, auth: true);
-    return ((r as Map)['items'] as List).cast<Map<String, dynamic>>();
+    final r = await _get(catalogPricingBase, '/catalog/items',
+        query: {'Service': serviceCode}, auth: true);
+    return ((r as Map)['Items'] as List).cast<Map<String, dynamic>>();
   }
 
   static Future<Map<String, dynamic>> quote({
     required String serviceTypeCode,
     required String deliveryType,
     required bool isExpress,
+    required bool isVendor,
     required List<Map<String, dynamic>> items,
   }) async {
-    final r = await _post(ordersBase, '/pricing/quote', {
-      'serviceTypeCode': serviceTypeCode,
-      'deliveryType': deliveryType,
-      'isExpress': isExpress,
-      'items': items,
+    final r = await _post(catalogPricingBase, '/pricing/quote', {
+      'ServiceTypeCode': serviceTypeCode,
+      'DeliveryType'   : deliveryType,
+      'IsExpress'      : isExpress,
+      'IsVendor'       : isVendor,
+      'Items'          : items,
     }, auth: true);
     return (r as Map).cast<String, dynamic>();
   }
@@ -119,25 +133,41 @@ class ApiClient {
     String? notes,
   }) async {
     final r = await _post(ordersBase, '/orders', {
-      'customerId': customerId,
-      'serviceTypeCode': serviceTypeCode,
-      'channel': channel,
-      'deliveryType': deliveryType,
-      'isExpress': isExpress,
-      'items': items,
-      if (notes != null) 'notes': notes,
+      'CustomerId'     : customerId,
+      'ServiceTypeCode': serviceTypeCode,
+      'Channel'        : channel,
+      'DeliveryType'   : deliveryType,
+      'IsExpress'      : isExpress,
+      'Items'          : items,
+      if (notes != null) 'Notes': notes,
     }, auth: true);
     return (r as Map).cast<String, dynamic>();
   }
 
   static Future<List<Map<String, dynamic>>> myOrders(String customerId) async {
-    final r = await _get(ordersBase, '/orders/me', query: {'customerId': customerId}, auth: true);
-    return ((r as Map)['items'] as List).cast<Map<String, dynamic>>();
+    final r = await _get(ordersBase, '/orders/mine',
+        query: {'CustomerId': customerId}, auth: true);
+    return ((r as Map)['Items'] as List).cast<Map<String, dynamic>>();
   }
 
   static Future<Map<String, dynamic>> orderDetail(String id) async {
     final r = await _get(ordersBase, '/orders/$id', auth: true);
     return (r as Map).cast<String, dynamic>();
   }
-}
 
+  // ---- Payments ----
+  static Future<Map<String, dynamic>> initiatePayment({
+    required String orderId,
+    required String orderCode,
+    required double amountInr,
+    String provider = 'Razorpay',
+  }) async {
+    final r = await _post(paymentsBase, '/payments/initiate', {
+      'OrderId'  : orderId,
+      'OrderCode': orderCode,
+      'AmountInr': amountInr,
+      'Provider' : provider,
+    }, auth: true);
+    return (r as Map).cast<String, dynamic>();
+  }
+}

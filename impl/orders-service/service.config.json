@@ -1,0 +1,21 @@
+{
+    "SystemIdentifier"     : "PTKharade",
+    "ServiceName"          : "orders-service",
+    "BaseUrl"              : "http://localhost:4003",
+    "ApiVersion"           : "v1",
+    "Logging"              : { "Provider": "Custom", "Level": "Information" },
+    "TemporaryFolders"     : {
+        "UploadFolder"               : "./tmp/uploads/",
+        "DownloadFolder"             : "./tmp/downloads/",
+        "CleanupFolderBeforeMinutes" : 1440
+    },
+    "Authentication"       : { "Provider": "Custom" },
+    "Authorization"        : { "Provider": "Custom" },
+    "Database"             : { "Type": "PostgreSQL", "ORM": "TypeORM" },
+    "Cache"                : { "Provider": "Redis" },
+    "Sms"                  : { "Provider": "MSG91" },
+    "Email"                : { "Provider": "SMTP" },
+    "MobileNotification"   : { "Provider": "Firebase" },
+    "MaxUploadFileSize"    : 10485760,
+    "Telemetry"            : false
+}

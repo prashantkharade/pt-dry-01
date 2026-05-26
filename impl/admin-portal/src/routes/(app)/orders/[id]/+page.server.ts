@@ -4,7 +4,7 @@ import { Orders } from '$lib/server/backend';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
   const u = locals.sessionUser!;
-  const detail = await Orders.getOrder(u.accessToken, params.id);
+  const detail = await Orders.get(u.accessToken, params.id);
   return { detail };
 };
 

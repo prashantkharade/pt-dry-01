@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PageData, ActionData } from './$types';
   let { data, form }: { data: PageData; form: ActionData } = $props();
-  const o = $derived(data.detail.order);
+  const o = $derived(data.detail);
   const inr = (n: unknown) => '₹' + Number(n ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 0 });
   const date = (d: unknown) => new Date(String(d)).toLocaleString('en-IN');
 
@@ -32,7 +32,7 @@
     <table>
       <thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
       <tbody>
-        {#each data.detail.lines as l (l.id)}
+        {#each (o.Lines as Array<Record<string, unknown>> | undefined) ?? [] as l (l.id)}
           <tr><td>{l.ItemName} <span class="muted small">{l.ItemCode}</span></td><td>{l.Quantity}</td><td>{inr(l.UnitRateInr)}</td><td>{inr(l.LineTotalInr)}</td></tr>
         {/each}
         <tr><td colspan="3" class="right">Subtotal</td><td>{inr(o.SubtotalInr)}</td></tr>
@@ -81,7 +81,7 @@
 <div class="card section" style="margin-top:1.5rem">
   <h2>History</h2>
   <ul class="timeline">
-    {#each data.detail.history as h (h.id)}
+    {#each (o.History as Array<Record<string, unknown>> | undefined) ?? [] as h (h.id)}
       <li><span class="badge info">{h.ToStatus}</span> <span class="muted small">{date(h.CreatedAt)}</span>{#if h.Note} — {h.Note}{/if}</li>
     {/each}
   </ul>
