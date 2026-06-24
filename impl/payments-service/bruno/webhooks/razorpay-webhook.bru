@@ -1,0 +1,47 @@
+meta {
+  name: Razorpay Webhook
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/webhooks/razorpay
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-razorpay-signature: {{razorpayWebhookSignature}}
+}
+
+body:json {
+  {
+    "event": "payment.captured",
+    "account_id": "acc_Dev0000000001",
+    "entity": "event",
+    "contains": ["payment"],
+    "payload": {
+      "payment": {
+        "entity": {
+          "id": "pay_DevRzp0000001",
+          "entity": "payment",
+          "amount": 49900,
+          "currency": "INR",
+          "status": "captured",
+          "order_id": "order_DevRzp0000001",
+          "method": "upi",
+          "email": "rohan.sharma@example.in",
+          "contact": "+919812345678"
+        }
+      }
+    },
+    "created_at": 1750000000
+  }
+}
+
+tests {
+  test("Razorpay Webhook works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

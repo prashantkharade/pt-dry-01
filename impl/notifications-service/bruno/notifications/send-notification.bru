@@ -1,0 +1,35 @@
+meta {
+  name: Send Notification
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/notifications/send
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "Channel": "SMS",
+    "Recipient": "+919876543210",
+    "Subject": "Pickup Confirmation",
+    "Body": "Namaste! Your laundry order PTDRY-1024 has been picked up and will be delivered by 6 PM.",
+    "TemplateCode": "ORDER_PICKUP"
+  }
+}
+
+vars:post-response {
+  NOTIFICATION_ID: res.body.Data.id
+}
+
+tests {
+  test("notification dispatched", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+}

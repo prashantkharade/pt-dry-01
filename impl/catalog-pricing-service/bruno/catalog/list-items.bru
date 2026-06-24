@@ -1,0 +1,26 @@
+meta {
+  name: List Items
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/catalog/items?Service=DRY_CLEAN&IncludeVendor=1
+  body: none
+  auth: inherit
+}
+
+params:query {
+  Service: DRY_CLEAN
+  IncludeVendor: 1
+}
+
+vars:post-response {
+  ITEM_ID: res.body.Data.Items[0].id
+}
+
+tests {
+  test("List items works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

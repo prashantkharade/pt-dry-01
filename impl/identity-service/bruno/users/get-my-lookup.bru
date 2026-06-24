@@ -1,0 +1,17 @@
+meta {
+  name: Get My Lookup
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/users/me/lookup
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Get My Lookup works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

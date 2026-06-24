@@ -1,0 +1,17 @@
+meta {
+  name: Get Item By Id
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/catalog/items/{{ITEM_ID}}
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Get item by id works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

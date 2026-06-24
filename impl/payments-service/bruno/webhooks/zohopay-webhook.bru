@@ -1,0 +1,42 @@
+meta {
+  name: Zohopay Webhook
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/webhooks/zohopay
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-zohopay-signature: {{zohopayWebhookSignature}}
+}
+
+body:json {
+  {
+    "event_type": "payment.captured",
+    "payload": {
+      "payment": {
+        "entity": {
+          "id": "zpay_Dev0000001",
+          "order_id": "zorder_Dev0000001",
+          "amount": 25000,
+          "currency": "INR",
+          "status": "captured",
+          "email": "anita.desai@example.in",
+          "contact": "+919898989898"
+        }
+      }
+    },
+    "created_at": 1750000000
+  }
+}
+
+tests {
+  test("Zohopay Webhook works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

@@ -1,0 +1,23 @@
+meta {
+  name: Search Users
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/users/search?NameLike=Prashant&PageIndex=0&ItemsPerPage=10
+  body: none
+  auth: inherit
+}
+
+params:query {
+  NameLike: Prashant
+  PageIndex: 0
+  ItemsPerPage: 10
+}
+
+tests {
+  test("Search Users works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

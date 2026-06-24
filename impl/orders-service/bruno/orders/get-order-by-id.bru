@@ -1,0 +1,17 @@
+meta {
+  name: Get Order By Id
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/orders/{{ORDER_ID}}
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Get Order By Id works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

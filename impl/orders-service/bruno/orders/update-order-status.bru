@@ -1,0 +1,28 @@
+meta {
+  name: Update Order Status
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/orders/{{ORDER_ID}}/status
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "Status": "PickedUp",
+    "Note": "Picked up from customer at Koregaon Park"
+  }
+}
+
+tests {
+  test("Update Order Status works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

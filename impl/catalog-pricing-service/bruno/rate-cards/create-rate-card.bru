@@ -1,0 +1,36 @@
+meta {
+  name: Create Rate Card
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/rate-cards
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "ItemId": "{{ITEM_ID}}",
+    "ServiceTypeCode": "DRY_CLEAN",
+    "Rate": 80,
+    "Uom": "PIECE",
+    "EffectiveFrom": "2026-06-01T00:00:00.000Z",
+    "IsVendorRate": false
+  }
+}
+
+vars:post-response {
+  RATE_CARD_ID: res.body.Data.id
+}
+
+tests {
+  test("Create rate card works", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+}

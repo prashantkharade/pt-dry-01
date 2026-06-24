@@ -1,0 +1,17 @@
+meta {
+  name: List Payments For Order
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/payments/order/{{ORDER_ID}}
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("List Payments For Order works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

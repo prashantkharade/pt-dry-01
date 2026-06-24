@@ -1,0 +1,17 @@
+meta {
+  name: Get Customer Internal
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1/customers/{{CUSTOMER_ID}}/internal
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Get Customer Internal works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

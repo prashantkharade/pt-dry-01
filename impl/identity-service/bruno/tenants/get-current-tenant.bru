@@ -1,0 +1,17 @@
+meta {
+  name: Get Current Tenant
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/tenants/current
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Get Current Tenant works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

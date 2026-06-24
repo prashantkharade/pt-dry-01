@@ -1,0 +1,164 @@
+{
+  "info": {
+    "name": "orders-service",
+    "description": "PTDRY orders-service API (Express + TypeORM). Base http://localhost:4003, prefix /api/v1. All routes require Authorization: Bearer {{authToken}} (issued by identity-service). Response envelope: { Status, Message, HttpCode, Data } — IDs at Data.id.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "ptdry-orders-service-0001-0001-000000000001"
+  },
+  "item": [
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "01 Create Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"created\", function(){ pm.response.to.have.status(201); });",
+                  "var j = pm.response.json();",
+                  "if (j && j.Data && j.Data.id) pm.environment.set(\"ORDER_ID\", j.Data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"CustomerId\": \"{{CUSTOMER_ID}}\",\n  \"ServiceTypeCode\": \"DRY_CLEAN\",\n  \"Channel\": \"HomePickup\",\n  \"DeliveryType\": \"HomeDelivery\",\n  \"IsExpress\": false,\n  \"BilledTo\": \"Customer\",\n  \"Items\": [\n    {\n      \"ItemId\": \"{{ITEM_ID}}\",\n      \"Quantity\": 3,\n      \"Note\": \"Handle silk saree with care\"\n    }\n  ],\n  \"ScheduledAt\": \"2026-06-26T10:30:00.000Z\",\n  \"DeliveryAddressId\": \"{{DELIVERY_ADDRESS_ID}}\",\n  \"Notes\": \"Ring the bell twice. Flat 402, Koregaon Park, Pune.\"\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "orders"]
+            }
+          }
+        },
+        {
+          "name": "02 Search Orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders?Status=Booked&PageIndex=0&ItemsPerPage=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "orders"],
+              "query": [
+                {"key": "Status", "value": "Booked"},
+                {"key": "PageIndex", "value": "0"},
+                {"key": "ItemsPerPage", "value": "10"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "03 List My Orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/mine?CustomerId={{CUSTOMER_ID}}&PageIndex=0&ItemsPerPage=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "orders", "mine"],
+              "query": [
+                {"key": "CustomerId", "value": "{{CUSTOMER_ID}}"},
+                {"key": "PageIndex", "value": "0"},
+                {"key": "ItemsPerPage", "value": "10"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "04 Get Order By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{ORDER_ID}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "orders", "{{ORDER_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "05 Update Order Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Status\": \"PickedUp\",\n  \"Note\": \"Picked up from customer at Koregaon Park\"\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{ORDER_ID}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "orders", "{{ORDER_ID}}", "status"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

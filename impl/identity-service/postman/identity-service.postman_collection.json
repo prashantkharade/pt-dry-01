@@ -1,0 +1,484 @@
+{
+  "info": {
+    "name": "identity-service",
+    "description": "PTDRY identity-service API collection. Base URL http://localhost:4001, prefix /api/v1. Login (or Verify OTP) first to capture authToken; most routes require Authorization: Bearer {{authToken}}. OTP/login routes are anonymous.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "b1e7c0a2-3d4f-4a8b-9c11-identity0001"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "01 Send OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"sent\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Phone\": \"+919876543210\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/otp/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "otp", "send"]
+            }
+          }
+        },
+        {
+          "name": "02 Verify OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"verified\", function(){ pm.response.to.have.status(200); });",
+                  "var j = pm.response.json();",
+                  "if (j && j.Data && j.Data.AccessToken) pm.environment.set(\"authToken\", j.Data.AccessToken);",
+                  "if (j && j.Data && j.Data.User && j.Data.User.id) pm.environment.set(\"USER_ID\", j.Data.User.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Phone\": \"+919876543210\",\n  \"Otp\": \"123456\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/otp/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "otp", "verify"]
+            }
+          }
+        },
+        {
+          "name": "03 Login (Password)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"logged in\", function(){ pm.response.to.have.status(200); });",
+                  "var j = pm.response.json();",
+                  "if (j && j.Data && j.Data.AccessToken) pm.environment.set(\"authToken\", j.Data.AccessToken);",
+                  "if (j && j.Data && j.Data.User && j.Data.User.id) pm.environment.set(\"USER_ID\", j.Data.User.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"EmailOrPhone\": \"admin@ptkharade.in\",\n  \"Password\": \"Admin@12345\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "04 Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"logged out\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "01 Get Me",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });",
+                  "var j = pm.response.json();",
+                  "if (j && j.Data && j.Data.id) pm.environment.set(\"USER_ID\", j.Data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "me"]
+            }
+          }
+        },
+        {
+          "name": "02 Update Me",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"updated\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"FirstName\": \"Prashant\",\n  \"LastName\": \"Kharade\",\n  \"Email\": \"prashant@ptkharade.in\",\n  \"PreferredLanguage\": \"en\",\n  \"ProfileImageUrl\": \"https://cdn.ptkharade.in/avatars/prashant.png\",\n  \"ThemePrefs\": { \"mode\": \"dark\" }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "me"]
+            }
+          }
+        },
+        {
+          "name": "03 Get My Lookup",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/me/lookup",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "me", "lookup"]
+            }
+          }
+        },
+        {
+          "name": "04 Search Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/search?NameLike=Prashant&PageIndex=0&ItemsPerPage=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "search"],
+              "query": [
+                { "key": "NameLike", "value": "Prashant" },
+                { "key": "PageIndex", "value": "0" },
+                { "key": "ItemsPerPage", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "05 Get User By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{USER_ID}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{USER_ID}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "customers",
+      "item": [
+        {
+          "name": "01 Create Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"created\", function(){ pm.response.to.have.status(201); });",
+                  "var j = pm.response.json();",
+                  "if (j && j.Data && j.Data.id) pm.environment.set(\"CUSTOMER_ID\", j.Data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Name\": \"Anita Deshmukh\",\n  \"Phone\": \"+919823456710\",\n  \"Email\": \"anita.deshmukh@example.in\",\n  \"CustomerType\": \"Retail\",\n  \"PriceTier\": \"Standard\",\n  \"CreditLimit\": 5000,\n  \"PaymentTermsDays\": 15,\n  \"Address\": {\n    \"Flat\": \"B-204\",\n    \"Building\": \"Sai Residency\",\n    \"Society\": \"Kothrud Heights\",\n    \"Landmark\": \"Near Mhatre Bridge\",\n    \"Area\": \"Kothrud\",\n    \"City\": \"Pune\",\n    \"State\": \"Maharashtra\",\n    \"Pincode\": \"411038\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers"]
+            }
+          }
+        },
+        {
+          "name": "02 Get Customer By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers/{{CUSTOMER_ID}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers", "{{CUSTOMER_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "03 Search Customers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers?Query=Anita&CustomerType=Retail&PageIndex=0&ItemsPerPage=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers"],
+              "query": [
+                { "key": "Query", "value": "Anita" },
+                { "key": "CustomerType", "value": "Retail" },
+                { "key": "PageIndex", "value": "0" },
+                { "key": "ItemsPerPage", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "04 Update Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"updated\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Name\": \"Anita Deshmukh\",\n  \"CustomerType\": \"Vendor\",\n  \"BusinessName\": \"Deshmukh Traders\",\n  \"Gstin\": \"27ABCDE1234F1Z5\",\n  \"PriceTier\": \"Premium\",\n  \"CreditLimit\": 25000,\n  \"PaymentTermsDays\": 30,\n  \"IsBlocked\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers/{{CUSTOMER_ID}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers", "{{CUSTOMER_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "05 Get Customer Internal",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers/{{CUSTOMER_ID}}/internal",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers", "{{CUSTOMER_ID}}", "internal"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "tenants",
+      "item": [
+        {
+          "name": "01 Get Current Tenant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tenants/current",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "tenants", "current"]
+            }
+          }
+        },
+        {
+          "name": "02 List Branches",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tenants/branches",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "tenants", "branches"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

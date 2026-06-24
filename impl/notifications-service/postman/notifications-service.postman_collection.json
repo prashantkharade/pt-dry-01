@@ -1,0 +1,76 @@
+{
+  "info": {
+    "name": "notifications-service",
+    "description": "PTDRY notifications-service API. Express + TypeORM, prefix /api/v1, base http://localhost:4005. Standard response envelope { Status, Message, HttpCode, Data }. Created IDs live at Data.id.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "ptdry-notifications-service-0001-4005-000000000001"
+  },
+  "item": [
+    {
+      "name": "Service",
+      "item": [
+        {
+          "name": "01 Service Info",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"service info works\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "01 Send Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"notification dispatched\", function(){ pm.response.to.have.status(201); });",
+                  "var j = pm.response.json();",
+                  "if (j && j.Data && j.Data.id) pm.environment.set(\"NOTIFICATION_ID\", j.Data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Channel\": \"SMS\",\n  \"Recipient\": \"+919876543210\",\n  \"Subject\": \"Pickup Confirmation\",\n  \"Body\": \"Namaste! Your laundry order PTDRY-1024 has been picked up and will be delivered by 6 PM.\",\n  \"TemplateCode\": \"ORDER_PICKUP\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "notifications", "send"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

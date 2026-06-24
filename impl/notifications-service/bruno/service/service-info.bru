@@ -1,0 +1,17 @@
+meta {
+  name: Service Info
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/
+  body: none
+  auth: none
+}
+
+tests {
+  test("service info works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

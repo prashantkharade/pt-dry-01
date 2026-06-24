@@ -5,9 +5,15 @@ directly under `impl/` and run independently. There is no monorepo and no
 workspace package — each service has its own `package.json`, `node_modules`,
 `.env`, `Dockerfile` and entrypoint.
 
+> **Just want to run everything?** See **[RUNNING.md](RUNNING.md)** for the
+> copy-paste quick-start, or run `.\start-all.ps1` from `impl/` to launch all
+> five backends + the admin portal in one go.
+
 ```
 impl/
 ├── docker-compose.yml              shared infra: Postgres 16 + Redis 7
+├── start-all.ps1                   launch all 5 services + admin portal (Windows)
+├── RUNNING.md                      consolidated run-everything guide
 ├── infra/init-db.sql               bootstraps the 5 per-service databases
 ├── identity-service/               :4001  auth, users, customers, tenants, branches, RBAC
 ├── catalog-pricing-service/        :4002  items, rate cards, surcharges, /pricing/quote

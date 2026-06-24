@@ -80,8 +80,12 @@ class ApiClient {
       _call(base, 'PATCH', path, body: body, auth: auth).then((m) => m['Data']);
 
   // ---- Auth ----
-  static Future<void> otpSend(String phone) =>
-      _post(identityBase, '/auth/otp/send', {'Phone': phone});
+  /// Returns the dev OTP when the backend runs in non-production mode
+  /// (identity-service returns it in the response `DevOtp` field), else null.
+  static Future<String?> otpSend(String phone) async {
+    final r = await _post(identityBase, '/auth/otp/send', {'Phone': phone});
+    return (r as Map?)?['DevOtp'] as String?;
+  }
 
   static Future<Map<String, dynamic>> otpVerify(String phone, String otp) async {
     final res = await _post(identityBase, '/auth/otp/verify', {'Phone': phone, 'Otp': otp});

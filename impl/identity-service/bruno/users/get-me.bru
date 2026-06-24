@@ -1,0 +1,17 @@
+meta {
+  name: Get Me
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/users/me
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Get Me works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

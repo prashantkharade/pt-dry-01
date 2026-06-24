@@ -1,0 +1,17 @@
+meta {
+  name: List Service Types
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/catalog/service-types
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("List service types works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

@@ -1,0 +1,245 @@
+{
+  "info": {
+    "name": "catalog-pricing-service",
+    "description": "PTDRY catalog-pricing-service API collection. Base URL http://localhost:4002, prefix /api/v1. Every endpoint requires a Bearer JWT issued by identity-service (Authorization: Bearer {{authToken}}). This service has no login endpoint and no x-api-key routes; obtain authToken from identity-service first. POST /rate-cards requires the SystemAdmin role.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "c47a1f02-9b3d-4d21-8e7c-catalogpricing01"
+  },
+  "item": [
+    {
+      "name": "catalog",
+      "item": [
+        {
+          "name": "01 List Service Types",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"list service types ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalog/service-types",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "catalog", "service-types"]
+            }
+          }
+        },
+        {
+          "name": "02 List Categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"list categories ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalog/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "catalog", "categories"]
+            }
+          }
+        },
+        {
+          "name": "03 List Items",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"list items ok\", function(){ pm.response.to.have.status(200); });",
+                  "var j = pm.response.json();",
+                  "if (j && j.Data && j.Data.Items && j.Data.Items.length > 0) pm.environment.set(\"ITEM_ID\", j.Data.Items[0].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalog/items?Service=DRY_CLEAN&IncludeVendor=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "catalog", "items"],
+              "query": [
+                { "key": "Service", "value": "DRY_CLEAN" },
+                { "key": "IncludeVendor", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "04 Get Item By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"get item ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalog/items/{{ITEM_ID}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "catalog", "items", "{{ITEM_ID}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "rate-cards",
+      "item": [
+        {
+          "name": "01 Create Rate Card",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"rate card created\", function(){ pm.response.to.have.status(201); });",
+                  "var j = pm.response.json();",
+                  "if (j && j.Data && j.Data.id) pm.environment.set(\"RATE_CARD_ID\", j.Data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ItemId\": \"{{ITEM_ID}}\",\n  \"ServiceTypeCode\": \"DRY_CLEAN\",\n  \"Rate\": 80,\n  \"Uom\": \"PIECE\",\n  \"EffectiveFrom\": \"2026-06-01T00:00:00.000Z\",\n  \"IsVendorRate\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/rate-cards",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "rate-cards"]
+            }
+          }
+        },
+        {
+          "name": "02 List Rate Cards",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"list rate cards ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/rate-cards",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "rate-cards"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "pricing",
+      "item": [
+        {
+          "name": "01 List Surcharges",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"list surcharges ok\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/pricing/surcharges",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "pricing", "surcharges"]
+            }
+          }
+        },
+        {
+          "name": "02 Compute Quote",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"quote computed\", function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ServiceTypeCode\": \"DRY_CLEAN\",\n  \"DeliveryType\": \"HomeDelivery\",\n  \"IsExpress\": false,\n  \"IsVendor\": false,\n  \"Items\": [\n    {\n      \"ItemId\": \"{{ITEM_ID}}\",\n      \"Quantity\": 3\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/pricing/quote",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "pricing", "quote"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

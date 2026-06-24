@@ -1,0 +1,23 @@
+meta {
+  name: Search Orders
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/orders?Status=Booked&PageIndex=0&ItemsPerPage=10
+  body: none
+  auth: inherit
+}
+
+params:query {
+  Status: Booked
+  PageIndex: 0
+  ItemsPerPage: 10
+}
+
+tests {
+  test("Search Orders works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

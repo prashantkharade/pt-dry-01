@@ -1,0 +1,38 @@
+meta {
+  name: Initiate Payment
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/payments/initiate
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "OrderId": "{{ORDER_ID}}",
+    "OrderCode": "{{ORDER_CODE}}",
+    "AmountInr": 499.00,
+    "Provider": "Razorpay",
+    "Metadata": {
+      "channel": "customer-app",
+      "city": "Pune"
+    }
+  }
+}
+
+vars:post-response {
+  PAYMENT_ID: res.body.Data.id
+}
+
+tests {
+  test("Initiate Payment works", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+}

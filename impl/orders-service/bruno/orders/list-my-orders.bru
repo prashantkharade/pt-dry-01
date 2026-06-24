@@ -1,0 +1,23 @@
+meta {
+  name: List My Orders
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/orders/mine?CustomerId={{CUSTOMER_ID}}&PageIndex=0&ItemsPerPage=10
+  body: none
+  auth: inherit
+}
+
+params:query {
+  CustomerId: {{CUSTOMER_ID}}
+  PageIndex: 0
+  ItemsPerPage: 10
+}
+
+tests {
+  test("List My Orders works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

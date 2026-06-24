@@ -1,0 +1,46 @@
+meta {
+  name: Create Order
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/orders
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "CustomerId": "{{CUSTOMER_ID}}",
+    "ServiceTypeCode": "DRY_CLEAN",
+    "Channel": "HomePickup",
+    "DeliveryType": "HomeDelivery",
+    "IsExpress": false,
+    "BilledTo": "Customer",
+    "Items": [
+      {
+        "ItemId": "{{ITEM_ID}}",
+        "Quantity": 3,
+        "Note": "Handle silk saree with care"
+      }
+    ],
+    "ScheduledAt": "2026-06-26T10:30:00.000Z",
+    "DeliveryAddressId": "{{DELIVERY_ADDRESS_ID}}",
+    "Notes": "Ring the bell twice. Flat 402, Koregaon Park, Pune."
+  }
+}
+
+vars:post-response {
+  ORDER_ID: res.body.Data.id
+}
+
+tests {
+  test("Create Order works", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+}

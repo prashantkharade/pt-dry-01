@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
 
 @Entity({ name: 'notification_templates' })
-@Unique('ux_templates_tenant_code', ['TenantId', 'Code'])
+@Unique('ux_templates_tenant_code', ['TenantId', 'Code', 'Channel', 'Language'])
 export class NotificationTemplate {
 
     @PrimaryGeneratedColumn('uuid')

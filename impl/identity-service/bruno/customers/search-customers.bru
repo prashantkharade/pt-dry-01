@@ -1,0 +1,24 @@
+meta {
+  name: Search Customers
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/customers?Query=Anita&CustomerType=Retail&PageIndex=0&ItemsPerPage=10
+  body: none
+  auth: inherit
+}
+
+params:query {
+  Query: Anita
+  CustomerType: Retail
+  PageIndex: 0
+  ItemsPerPage: 10
+}
+
+tests {
+  test("Search Customers works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

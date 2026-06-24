@@ -1,0 +1,36 @@
+meta {
+  name: Compute Quote
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/pricing/quote
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "ServiceTypeCode": "DRY_CLEAN",
+    "DeliveryType": "HomeDelivery",
+    "IsExpress": false,
+    "IsVendor": false,
+    "Items": [
+      {
+        "ItemId": "{{ITEM_ID}}",
+        "Quantity": 3
+      }
+    ]
+  }
+}
+
+tests {
+  test("Compute quote works", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

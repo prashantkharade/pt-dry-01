@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../core/api/api_client.dart';
+import '../../core/auth/auth_store.dart';
+
+// DEV ONLY: when true, skip the OTP entry screen by auto-verifying with the
+// DevOtp the backend returns in non-production. Flip to false (or override at
+// build time with --dart-define=BYPASS_OTP=false) to restore the real flow.
+const bool _bypassOtp =
+    bool.fromEnvironment('BYPASS_OTP', defaultValue: true);
 
 class PhoneScreen extends StatefulWidget {
   const PhoneScreen({super.key});
@@ -21,8 +28,17 @@ class _PhoneScreenState extends State<PhoneScreen> {
       return;
     }
     try {
-      await ApiClient.otpSend(phone);
+      final devOtp = await ApiClient.otpSend(phone);
       if (!mounted) return;
+      // DEV BYPASS: backend returns the OTP in non-production — auto-verify and
+      // go straight to home, skipping the OTP entry screen.
+      if (_bypassOtp && devOtp != null) {
+        final result = await ApiClient.otpVerify(phone, devOtp);
+        await AuthStore.instance.saveLogin(result);
+        if (!mounted) return;
+        Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
+        return;
+      }
       Navigator.of(context).pushNamed('/otp', arguments: phone);
     } catch (e) {
       setState(() => _error = e is ApiException ? e.message : 'Failed to send OTP');

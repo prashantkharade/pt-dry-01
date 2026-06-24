@@ -1,0 +1,47 @@
+meta {
+  name: Create Customer
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/customers
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "Name": "Anita Deshmukh",
+    "Phone": "+919823456710",
+    "Email": "anita.deshmukh@example.in",
+    "CustomerType": "Retail",
+    "PriceTier": "Standard",
+    "CreditLimit": 5000,
+    "PaymentTermsDays": 15,
+    "Address": {
+      "Flat": "B-204",
+      "Building": "Sai Residency",
+      "Society": "Kothrud Heights",
+      "Landmark": "Near Mhatre Bridge",
+      "Area": "Kothrud",
+      "City": "Pune",
+      "State": "Maharashtra",
+      "Pincode": "411038"
+    }
+  }
+}
+
+vars:post-response {
+  CUSTOMER_ID: res.body.Data.id
+}
+
+tests {
+  test("Create Customer works", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+}
