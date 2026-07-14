@@ -81,6 +81,11 @@ Anti-abuse: hash the phone+IP into a Redis key for the rate-limit counter.
 
 ## 3. Internationalisation — English + Marathi
 
+> ✅ **Implemented in `impl/`** — English + Marathi in both apps. Flutter uses
+> `flutter_localizations` + gen-l10n ARB (as recommended); the admin portal uses
+> a small typed dictionary instead of `paraglide-js` (deviation noted in
+> [`08-personalization-status.md`](08-personalization-status.md) §3).
+
 ### 3.1 Admin portal (SvelteKit)
 **Library:** `paraglide-js` (compile-time, type-safe, SvelteKit-first). No reference repo uses it — first-mover, but the cleanest option for new SvelteKit projects.
 
@@ -118,6 +123,11 @@ Sample Marathi templates (mandatory in BRIEF §4 for hi-fi realism):
 ---
 
 ## 4. Theming (BRIEF §2.5)
+
+> ✅ **Implemented in `impl/`** — all five dimensions + light/dark are live in
+> both the Flutter customer app and the SvelteKit admin portal, persisted
+> per-user. See [`08-personalization-status.md`](08-personalization-status.md)
+> for the spec-token→file map and the list of deviations from the design below.
 
 Specification: each user can configure **background colour**, **border style**, **font family**, **font size**, **light/dark**. Persisted per user. Applies to admin portal **and** customer app.
 

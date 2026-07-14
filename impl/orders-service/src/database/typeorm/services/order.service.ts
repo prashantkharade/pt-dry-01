@@ -46,7 +46,6 @@ export class OrderService extends BaseService {
         const isVendor = customer.CustomerType === 'Vendor';
 
         const quote = await this._pricing.quote({
-            TenantId        : customer.TenantId,
             ServiceTypeCode : input.ServiceTypeCode,
             IsVendor        : isVendor,
             IsExpress       : !!input.IsExpress,

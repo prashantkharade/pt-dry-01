@@ -1,6 +1,7 @@
 import express from 'express';
 import { container } from 'tsyringe';
 import { CustomerService } from '../../database/typeorm/services/customer.service';
+import { UserService } from '../../database/typeorm/services/user.service';
 import { CustomerValidator } from './customer.validator';
 import { ResponseHandler } from '../../common/handlers/response.handler';
 import { ErrorHandler } from '../../common/api.error';
@@ -8,6 +9,22 @@ import { ErrorHandler } from '../../common/api.error';
 export class CustomerController {
 
     private _customers = container.resolve(CustomerService);
+    private _users     = container.resolve(UserService);
+
+    //  GET /customers/me — the profile of the currently logged-in app user.
+    //  The customer app needs its CustomerId to place orders; this is the
+    //  endpoint it calls after login (there is no CustomerId in the JWT).
+    public getMine = async (request: express.Request, response: express.Response): Promise<express.Response> => {
+        try {
+            const u    = request.currentUser;
+            const user = await this._users.getById(u.UserId);
+            const dto  = await this._customers.getOrLinkForUser(u.UserId, u.TenantId, user?.Phone);
+            if (!dto) ErrorHandler.throwNotFoundError('No customer profile for this user');
+            return ResponseHandler.success(request, response, 'OK', 200, dto);
+        } catch (error) {
+            return ResponseHandler.handleError(request, response, error);
+        }
+    };
 
     public create = async (request: express.Request, response: express.Response): Promise<express.Response> => {
         try {

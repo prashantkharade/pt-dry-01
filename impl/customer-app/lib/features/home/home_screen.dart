@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pt_kharade_customer/l10n/app_localizations.dart';
 import '../../core/auth/auth_store.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -7,12 +8,19 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = AuthStore.instance;
+    final t = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PT Kharade'),
+        title: Text(t.appTitle),
         actions: [
           IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: t.settingsTooltip,
+            onPressed: () => Navigator.of(context).pushNamed('/settings'),
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
+            tooltip: t.logout,
             onPressed: () async {
               await auth.clear();
               if (context.mounted) Navigator.of(context).pushReplacementNamed('/login');
@@ -29,7 +37,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Hello, ${auth.name ?? 'Customer'}!',
+                  Text(t.greeting(auth.name ?? t.customer),
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                   Text(auth.phone ?? '', style: TextStyle(color: Colors.grey.shade700)),
                 ],
@@ -37,8 +45,8 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text('Choose a service',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          Text(t.chooseService,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
           GridView.count(
             crossAxisCount: 2,
@@ -47,11 +55,11 @@ class HomeScreen extends StatelessWidget {
             childAspectRatio: 1.6,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            children: const [
-              _ServiceCard(label: 'Dry Clean', code: 'DRY_CLEAN', icon: Icons.dry_cleaning),
-              _ServiceCard(label: 'Laundry', code: 'LAUNDRY', icon: Icons.local_laundry_service),
-              _ServiceCard(label: 'Press Only', code: 'PRESS_ONLY', icon: Icons.iron),
-              _ServiceCard(label: 'My Orders', code: 'orders', icon: Icons.receipt_long),
+            children: [
+              _ServiceCard(label: t.serviceDryClean, code: 'DRY_CLEAN', icon: Icons.dry_cleaning),
+              _ServiceCard(label: t.serviceLaundry, code: 'LAUNDRY', icon: Icons.local_laundry_service),
+              _ServiceCard(label: t.servicePressOnly, code: 'PRESS_ONLY', icon: Icons.iron),
+              _ServiceCard(label: t.myOrders, code: 'orders', icon: Icons.receipt_long),
             ],
           ),
         ],

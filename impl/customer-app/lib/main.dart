@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'app/app.dart';
 import 'core/api/api_client.dart';
 import 'core/auth/auth_store.dart';
+import 'core/settings/settings_store.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +42,7 @@ Future<void> main() async {
     notificationsBase  : notificationsBase,
     apiKey             : apiKey,
   );
+  await SettingsStore.instance.loadFromDisk();
   await AuthStore.instance.loadFromDisk();
 
   runApp(const PtKharadeApp());

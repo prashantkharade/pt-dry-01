@@ -16,8 +16,7 @@
         "resolveJsonModule"            : true,
         "strictNullChecks"             : false,
         "strictPropertyInitialization" : false,
-        "alwaysStrict"                 : true,
-        "ignoreDeprecations"           : "5.0"
+        "alwaysStrict"                 : true
     },
     "include": ["src/**/*.ts"],
     "exclude": ["node_modules", "dist", "tests"]

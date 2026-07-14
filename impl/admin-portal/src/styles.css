@@ -1,60 +1,154 @@
+/* ------------------------------------------------------------------ *
+ * Design tokens — shadcn-style semantic palette (ported from the
+ * charqol/form-builder-ui reference to a vanilla-CSS, no-Tailwind setup).
+ *
+ * Every surface has a matching `-foreground` for accessible contrast.
+ * `--primary-hsl` is an HSL triplet so it can be alpha-composited
+ * (`hsl(var(--primary-hsl) / 0.08)`) for accent-tinted hovers. The runtime
+ * settings store overrides `--primary-hsl` (accent), `--background`
+ * (bg tint) and `--radius` (border style). Legacy aliases (`--surface`,
+ * `--text`, `--accent`, …) are kept so existing components keep working.
+ * ------------------------------------------------------------------ */
 :root {
-  --bg: #f5f7fb;
-  --surface: #ffffff;
-  --border: #dde3ec;
-  --text: #1a2230;
-  --muted: #6b7689;
-  --accent: #2563eb;
-  --accent-fg: #ffffff;
-  --success: #2f9e44;
-  --danger: #e03131;
+  /* brand / primary — the personalization "accent" drives --primary-hsl */
+  --primary-hsl: 221 83% 53%;
+  --primary: hsl(var(--primary-hsl));
+  --primary-foreground: hsl(210 40% 98%);
+
+  /* neutrals (slate scale) */
+  --background: hsl(210 40% 98%);
+  --foreground: hsl(222 47% 11%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(222 47% 11%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(222 47% 11%);
+  --secondary: hsl(210 40% 96%);
+  --secondary-foreground: hsl(222 47% 11%);
+  --muted: hsl(210 40% 96%);
+  --muted-foreground: hsl(215 16% 47%);
+  --border: hsl(214 32% 91%);
+  --input: hsl(214 32% 91%);
+  --ring: hsl(var(--primary-hsl));
+
+  /* semantic states */
+  --destructive: hsl(0 72% 51%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --success: hsl(142 71% 41%);
+  --success-foreground: hsl(0 0% 100%);
+  --warning: hsl(25 95% 43%);
+  --warning-foreground: hsl(0 0% 100%);
+
   --radius: 10px;
-  --shadow: 0 2px 6px rgba(20, 30, 50, 0.06);
+  --shadow: 0 1px 2px hsl(222 47% 11% / 0.04), 0 2px 8px hsl(222 47% 11% / 0.06);
   --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* ---- legacy aliases (kept for existing component styles) ---- */
+  --bg: var(--background);
+  --surface: var(--card);
+  --text: var(--foreground);
+  --accent: var(--primary);
+  --accent-fg: var(--primary-foreground);
+  --danger: var(--destructive);
+}
+
+/* Dark theme — activated by data-theme="ptk-dark" on <html> (see settings). */
+:root[data-theme='ptk-dark'] {
+  --background: hsl(222 47% 7%);
+  --foreground: hsl(210 40% 96%);
+  --card: hsl(222 33% 13%);
+  --card-foreground: hsl(210 40% 96%);
+  --popover: hsl(222 33% 13%);
+  --popover-foreground: hsl(210 40% 96%);
+  --secondary: hsl(217 33% 18%);
+  --secondary-foreground: hsl(210 40% 96%);
+  --muted: hsl(217 33% 18%);
+  --muted-foreground: hsl(215 20% 65%);
+  --border: hsl(217 33% 24%);
+  --input: hsl(217 33% 24%);
+  --primary-foreground: hsl(222 47% 11%);
+  --destructive: hsl(0 63% 46%);
+  --shadow: 0 1px 2px hsl(0 0% 0% / 0.3), 0 2px 8px hsl(0 0% 0% / 0.4);
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: var(--font); }
-body { line-height: 1.5; }
-a { color: var(--accent); text-decoration: none; }
+
+/* ---- Typography scale ---- */
+/* --font-scale (set by the settings store) scales all rem-based sizing. */
+html { font-size: calc(100% * var(--font-scale, 1)); -webkit-text-size-adjust: 100%; }
+html, body { margin: 0; padding: 0; background: var(--background); color: var(--foreground); font-family: var(--font); }
+body {
+  line-height: 1.55;
+  font-size: 0.95rem;
+  letter-spacing: -0.006em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 0.5em;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+h1 { font-size: 1.875rem; }
+h2 { font-size: 1.375rem; }
+h3 { font-size: 1.15rem; font-weight: 600; }
+h4 { font-size: 1rem; font-weight: 600; }
+p { margin: 0 0 0.75rem; }
+small, .small { font-size: 0.85rem; }
+a { color: var(--primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 button, input, select, textarea { font: inherit; }
 input, select, textarea {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--input);
   border-radius: var(--radius);
   padding: 0.55rem 0.75rem;
   width: 100%;
 }
-input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+input::placeholder, textarea::placeholder { color: var(--muted-foreground); }
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+  border-color: var(--ring);
+}
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
   padding: 0.55rem 1rem; border-radius: var(--radius); cursor: pointer;
-  background: var(--accent); color: var(--accent-fg);
-  border: 1px solid var(--accent); font-weight: 600;
+  background: var(--primary); color: var(--primary-foreground);
+  border: 1px solid var(--primary); font-weight: 600;
+  transition: filter 0.12s ease, background 0.12s ease;
 }
-.btn:hover { filter: brightness(0.95); }
-.btn.secondary { background: var(--surface); color: var(--text); border-color: var(--border); }
-.btn.danger { background: var(--danger); border-color: var(--danger); }
+.btn:hover { filter: brightness(0.94); }
+.btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.btn.secondary { background: var(--card); color: var(--foreground); border-color: var(--border); }
+.btn.secondary:hover { background: hsl(var(--primary-hsl) / 0.06); filter: none; }
+.btn.danger { background: var(--destructive); border-color: var(--destructive); color: var(--destructive-foreground); }
 .btn[disabled] { opacity: 0.55; cursor: not-allowed; }
 
 .card {
-  background: var(--surface);
+  background: var(--card);
+  color: var(--card-foreground);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
 
-.muted { color: var(--muted); }
-.error { color: var(--danger); }
+.muted { color: var(--muted-foreground); }
+.error { color: var(--destructive); }
 .success { color: var(--success); }
 
 table { width: 100%; border-collapse: collapse; }
 th, td { text-align: left; padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--border); }
-th { background: #eef2f8; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
-tbody tr:hover { background: rgba(37, 99, 235, 0.04); }
+th {
+  background: var(--muted); font-weight: 600; font-size: 0.8rem;
+  text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted-foreground);
+}
+tbody tr:hover { background: hsl(var(--primary-hsl) / 0.05); }
 
 .badge {
   display: inline-block;
@@ -62,13 +156,13 @@ tbody tr:hover { background: rgba(37, 99, 235, 0.04); }
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: #eef2f8;
-  color: var(--muted);
+  background: var(--muted);
+  color: var(--muted-foreground);
 }
-.badge.success { background: #e6f7ec; color: var(--success); }
-.badge.warn { background: #fff4e6; color: #c2410c; }
-.badge.danger { background: #fde8e8; color: var(--danger); }
-.badge.info { background: #e7efff; color: var(--accent); }
+.badge.success { background: hsl(142 71% 41% / 0.14); color: var(--success); }
+.badge.warn { background: hsl(25 95% 43% / 0.14); color: var(--warning); }
+.badge.danger { background: hsl(0 72% 51% / 0.14); color: var(--destructive); }
+.badge.info { background: hsl(var(--primary-hsl) / 0.12); color: var(--primary); }
 
 .field { display: block; margin-bottom: 1rem; }
 .field label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem; }

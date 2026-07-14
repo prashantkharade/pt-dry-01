@@ -292,9 +292,32 @@ curl -X POST -H "authorization: Bearer $TOKEN" -H 'content-type: application/jso
   to migrations for prod). Entity column names use PascalCase to match the
   wire format.
 
+## Personalization (customer app + admin portal)
+
+Both frontends ship a **Settings** surface with live, per-user personalization:
+
+- **Theme** — light / dark / follow-system.
+- **Accent colour** — 6 seed colours applied to the whole UI.
+- **Background** — selectable tint (both apps; light mode).
+- **Font family** — Roboto / Inter / Noto Sans / Noto Sans Devanagari
+  (Marathi auto-forces a Devanagari face).
+- **Border/corner style** — soft / sharp / pill (radius) across inputs, buttons, cards.
+- **Text size** — a scale slider (typography).
+- **Language** — **English + Marathi (मराठी)**, fully translated UI.
+
+This covers the full BRIEF §2.5 theming token set (background, border style, font
+family, font size, light/dark) for **both** frontends — see
+`../guide/08-personalization-status.md` for the spec-to-implementation map.
+
+Customer app: a `SettingsStore` (`shared_preferences`) drives the `MaterialApp`
+theme/locale/`textScaler`; choices sync to identity-service via
+`PATCH /users/me` (`ThemePrefs` + `PreferredLanguage`) so they follow the
+account across devices. Strings live in `lib/l10n/app_{en,mr}.arb` (Flutter
+`gen-l10n`). Admin portal: a runes `settings` store + a tiny `i18n` dictionary
+apply theme/accent/scale to `<html>` and switch language client-side.
+
 ## Out-of-scope (planned, scaffolded)
 
 - BullMQ-on-Redis fan-out for notifications (queue worker is stubbed).
 - TypeORM migrations (currently `synchronize: true` per-service).
-- Marathi UI rendering (the data has `NameMr` fields; the UI shows English).
-- OpenTelemetry tracing, audit log UI, theming page, offline-first PWA.
+- OpenTelemetry tracing, audit log UI, offline-first PWA.

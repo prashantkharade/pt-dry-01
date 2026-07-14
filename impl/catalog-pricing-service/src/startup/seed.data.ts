@@ -43,6 +43,8 @@ export const RATES: Array<{
     // Dry Clean (BRIEF §2.3)
     { ItemCode: 'SHIRT'  , ServiceCode: 'DRY_CLEAN' , Rate: 50  },
     { ItemCode: 'PANT'   , ServiceCode: 'DRY_CLEAN' , Rate: 50  },
+    { ItemCode: 'KURTA'  , ServiceCode: 'DRY_CLEAN' , Rate: 80  },
+    { ItemCode: 'L_KURTA', ServiceCode: 'DRY_CLEAN' , Rate: 90  },
     { ItemCode: 'JERKIN' , ServiceCode: 'DRY_CLEAN' , Rate: 120 },
     { ItemCode: 'TOWEL'  , ServiceCode: 'DRY_CLEAN' , Rate: 60  },
     { ItemCode: 'SARI'   , ServiceCode: 'DRY_CLEAN' , Rate: 120 },

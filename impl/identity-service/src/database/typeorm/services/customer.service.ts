@@ -77,6 +77,31 @@ export class CustomerService extends BaseService {
         return this.getById(customer.id);
     };
 
+    public getByUserId = async (userId: string): Promise<CustomerDto> => {
+        const customer = await this._customerRepo.findOne({ where: { UserId: userId } });
+        if (!customer) return null;
+        return this.getById(customer.id);
+    };
+
+    //  Resolve (and self-heal) the customer profile for a logged-in app user.
+    //  App users are auto-provisioned with a UserId-linked customer at OTP
+    //  login, but a customer created earlier in the admin portal for the same
+    //  phone won't carry a UserId yet — link it lazily so both point at one row.
+    public getOrLinkForUser = async (
+        userId: string, tenantId: string, phone?: string,
+    ): Promise<CustomerDto> => {
+        const linked = await this.getByUserId(userId);
+        if (linked) return linked;
+        if (!phone) return null;
+        const byPhone = await this._customerRepo.findOne({ where: { TenantId: tenantId, Phone: phone } });
+        if (!byPhone) return null;
+        if (!byPhone.UserId) {
+            byPhone.UserId = userId;
+            await this._customerRepo.save(byPhone);
+        }
+        return this.getById(byPhone.id);
+    };
+
     public update = async (id: string, model: CustomerUpdateModel): Promise<CustomerDto> => {
         const c = await this._customerRepo.findOne({ where: { id } });
         if (!c) return null;

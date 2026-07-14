@@ -9,6 +9,8 @@ export const register = (app: express.Application): void => {
 
     router.get   ('/'             , ...context(CustomerAuth.search)     , controller.search);
     router.post  ('/'             , ...context(CustomerAuth.create)     , controller.create);
+    //  '/me' MUST be registered before '/:id' or Express captures "me" as an id.
+    router.get   ('/me'           , ...context(CustomerAuth.getMine)    , controller.getMine);
     router.get   ('/:id'          , ...context(CustomerAuth.getById)    , controller.getById);
     router.put   ('/:id'          , ...context(CustomerAuth.update)     , controller.update);
     router.get   ('/:id/internal' , ...context(CustomerAuth.getInternal), controller.getInternal);

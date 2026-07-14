@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pt_kharade_customer/l10n/app_localizations.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_store.dart';
+import '../../core/settings/settings_store.dart';
 
 // DEV ONLY: when true, skip the OTP entry screen by auto-verifying with the
 // DevOtp the backend returns in non-production. Flip to false (or override at
@@ -20,11 +22,12 @@ class _PhoneScreenState extends State<PhoneScreen> {
   String? _error;
 
   Future<void> _send() async {
+    final t = AppLocalizations.of(context);
     setState(() { _loading = true; _error = null; });
     final raw = _ctrl.text.trim();
     final phone = raw.startsWith('+91') ? raw : '+91$raw';
     if (!RegExp(r'^\+91[6-9]\d{9}$').hasMatch(phone)) {
-      setState(() { _loading = false; _error = 'Enter a 10-digit Indian mobile number'; });
+      setState(() { _loading = false; _error = t.invalidMobile; });
       return;
     }
     try {
@@ -35,40 +38,52 @@ class _PhoneScreenState extends State<PhoneScreen> {
       if (_bypassOtp && devOtp != null) {
         final result = await ApiClient.otpVerify(phone, devOtp);
         await AuthStore.instance.saveLogin(result);
+        await AuthStore.instance.ensureCustomerId();
+        await _hydrateSettings();
         if (!mounted) return;
         Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
         return;
       }
       Navigator.of(context).pushNamed('/otp', arguments: phone);
     } catch (e) {
-      setState(() => _error = e is ApiException ? e.message : 'Failed to send OTP');
+      setState(() => _error = e is ApiException ? e.message : t.failedSendOtp);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
+  /// Pulls account-level personalization (language/theme) after login so it
+  /// follows the user to this device. Best-effort — never blocks sign-in.
+  Future<void> _hydrateSettings() async {
+    try {
+      final user = await ApiClient.me();
+      await SettingsStore.instance.hydrateFromServer(user);
+    } catch (_) {/* ignore */}
+  }
+
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign in')),
+      appBar: AppBar(title: Text(t.signIn)),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 32),
-            const Text('Welcome to PT Kharade',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+            Text(t.welcome,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
-            Text('Sign in to book pickup, track orders & pay.',
+            Text(t.signInSubtitle,
                 style: TextStyle(color: Colors.grey.shade700)),
             const SizedBox(height: 32),
             TextField(
               controller: _ctrl,
               keyboardType: TextInputType.phone,
               maxLength: 10,
-              decoration: const InputDecoration(
-                labelText: 'Mobile number',
+              decoration: InputDecoration(
+                labelText: t.mobileNumber,
                 prefixText: '+91  ',
               ),
             ),
@@ -81,7 +96,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
               onPressed: _loading ? null : _send,
               child: _loading
                   ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Send OTP'),
+                  : Text(t.sendOtp),
             ),
           ],
         ),

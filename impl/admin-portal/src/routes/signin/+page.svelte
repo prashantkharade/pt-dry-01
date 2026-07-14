@@ -45,5 +45,5 @@
   .login { width: 100%; max-width: 420px; padding: 2rem; }
   h1 { margin: 0 0 0.5rem; }
   .small { font-size: 0.85rem; margin-top: 0.5rem; }
-  code { background: #eef2f8; padding: 0 0.25rem; border-radius: 4px; }
+  code { background: var(--muted); color: var(--foreground); padding: 0 0.25rem; border-radius: 4px; }
 </style>

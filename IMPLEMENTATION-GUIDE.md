@@ -118,6 +118,7 @@ Cross-cutting decisions, justified against the reference repos:
 | [`guide/db/03-orders-schema.md`](guide/db/03-orders-schema.md) | orders, items, status history, activities, notes, reviews, subscriptions (pause/resume/DoW), preparation batches, slot capacity, full delivery domain. |
 | [`guide/db/04-payments-schema.md`](guide/db/04-payments-schema.md) | bills, bill lines, recurring invoices, payments + state machine, payment events, refunds, webhook events, payment methods, wallets, wallet transactions, vendor settlements, payouts. |
 | [`guide/db/05-notifications-schema.md`](guide/db/05-notifications-schema.md) | notification templates (en + mr), send attempts, user prefs, in-app inbox, contact-us, terms/policies, file resources. |
+| [`guide/08-personalization-status.md`](guide/08-personalization-status.md) | **Implementation status** for BRIEF §2.5 theming + i18n as built in `impl/`: spec-token→file map for both frontends, plus documented deviations and extras. |
 
 ---
 

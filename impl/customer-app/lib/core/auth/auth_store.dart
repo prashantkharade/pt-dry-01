@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../api/api_client.dart';
 
 class AuthStore extends ChangeNotifier {
   AuthStore._();
@@ -58,6 +59,18 @@ class AuthStore extends ChangeNotifier {
     _customerId = id;
     await _storage.write(key: _kCustomerId, value: id);
     notifyListeners();
+  }
+
+  /// Resolves the logged-in user's CustomerId from identity-service and caches
+  /// it. Returns the id (existing or freshly fetched), or null if the user has
+  /// no customer profile. Safe to call repeatedly — it's a no-op once cached.
+  Future<String?> ensureCustomerId() async {
+    if (_customerId != null) return _customerId;
+    if (_accessToken == null) return null;
+    final profile = await ApiClient.customerMe();
+    final id = profile?['id'] as String?;
+    if (id != null) await setCustomerId(id);
+    return id;
   }
 
   Future<void> clear() async {

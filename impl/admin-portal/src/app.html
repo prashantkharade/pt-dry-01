@@ -6,6 +6,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="PT Kharade Drycleaners & Laundry — Admin Portal" />
     <title>PT Kharade Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans:wght@400;600&family=Noto+Sans+Devanagari:wght@400;600&family=Roboto:wght@400;600&display=swap" />
+    <script>
+      // Apply saved personalization before first paint to avoid a flash.
+      (function () {
+        try {
+          var s = JSON.parse(localStorage.getItem('ptk.settings') || '{}');
+          var accentHsl = { blue: '221 83% 53%', teal: '173 80% 32%', green: '161 84% 30%', purple: '262 83% 58%', orange: '21 90% 48%', pink: '330 81% 51%' };
+          var fonts = {
+            Inter: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+            'Noto Sans': "'Noto Sans', system-ui, -apple-system, 'Segoe UI', sans-serif",
+            'Noto Sans Devanagari': "'Noto Sans Devanagari', 'Noto Sans', system-ui, sans-serif",
+            Roboto: "Roboto, system-ui, -apple-system, 'Segoe UI', sans-serif"
+          };
+          var borders = { soft: '10px', sharp: '3px', pill: '999px' };
+          var backgrounds = { default: '#f5f7fb', white: '#ffffff', warm: '#fdf6ec', mint: '#eff7f1', lavender: '#f3f0fa' };
+          var dark = s.mode === 'dark' || (s.mode !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var root = document.documentElement;
+          root.setAttribute('data-theme', dark ? 'ptk-dark' : 'ptk-light');
+          if (accentHsl[s.accent]) root.style.setProperty('--primary-hsl', accentHsl[s.accent]);
+          if (!dark && backgrounds[s.background]) root.style.setProperty('--background', backgrounds[s.background]);
+          if (typeof s.fontScale === 'number') root.style.setProperty('--font-scale', String(s.fontScale));
+          if (borders[s.border]) root.style.setProperty('--radius', borders[s.border]);
+          if (fonts[s.font]) {
+            var stack = fonts[s.font];
+            root.style.setProperty('--font', s.lang === 'mr' ? "'Noto Sans Devanagari', " + stack : stack);
+          }
+          if (s.lang === 'en' || s.lang === 'mr') root.setAttribute('lang', s.lang);
+        } catch (e) {}
+      })();
+    </script>
     %sveltekit.head%
   </head>
   <body data-sveltekit-preload-data="hover">

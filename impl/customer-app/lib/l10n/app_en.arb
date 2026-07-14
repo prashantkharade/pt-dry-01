@@ -1,0 +1,107 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "PT Kharade",
+  "brandFull": "PT Kharade Drycleaners",
+
+  "greeting": "Hello, {name}!",
+  "@greeting": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "customer": "Customer",
+  "chooseService": "Choose a service",
+  "serviceDryClean": "Dry Clean",
+  "serviceLaundry": "Laundry",
+  "servicePressOnly": "Press Only",
+  "myOrders": "My Orders",
+  "logout": "Log out",
+  "settingsTooltip": "Settings",
+
+  "signIn": "Sign in",
+  "welcome": "Welcome to PT Kharade",
+  "signInSubtitle": "Sign in to book pickup, track orders & pay.",
+  "mobileNumber": "Mobile number",
+  "sendOtp": "Send OTP",
+  "invalidMobile": "Enter a 10-digit Indian mobile number",
+  "failedSendOtp": "Failed to send OTP",
+
+  "verifyOtp": "Verify OTP",
+  "otpSentTo": "Enter the 6-digit OTP sent to {phone}",
+  "@otpSentTo": {
+    "placeholders": { "phone": { "type": "String" } }
+  },
+  "otpDevHint": "In development, check the identity-service logs for the OTP value.",
+  "otpLabel": "OTP",
+  "verifyContinue": "Verify & continue",
+  "enter6Digit": "Enter the 6-digit code",
+  "verificationFailed": "Verification failed",
+
+  "bookTitle": "Book — {service}",
+  "@bookTitle": {
+    "placeholders": { "service": { "type": "String" } }
+  },
+  "collection": "Collection",
+  "dropAtShop": "Drop at shop",
+  "homePickup": "Home pickup",
+  "delivery": "Delivery",
+  "pickupAtShop": "Pickup at shop",
+  "homeDelivery": "Home delivery",
+  "express": "Express / same-day (+25%)",
+  "pricePreview": "Price preview",
+  "subtotal": "Subtotal",
+  "expressLine": "Express",
+  "gst": "GST",
+  "total": "Total",
+  "getQuote": "Get quote",
+  "placeOrder": "Place order",
+  "failedLoadItems": "Failed to load items",
+  "quoteFailed": "Quote failed",
+  "setupProfileFirst": "Set up your customer profile via the admin portal first.",
+  "failedPlaceOrder": "Failed to place order",
+
+  "myOrdersTitle": "My orders",
+  "noOrders": "No orders yet — book your first service.",
+  "errorWithMessage": "Error: {message}",
+  "@errorWithMessage": {
+    "placeholders": { "message": { "type": "String" } }
+  },
+
+  "orderTitle": "Order",
+  "timeline": "Timeline",
+
+  "settings": "Settings",
+  "appearance": "Appearance",
+  "theme": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "accentColor": "Accent color",
+  "background": "Background",
+  "font": "Font",
+  "cornerStyle": "Corner style",
+  "borderSoft": "Soft",
+  "borderSharp": "Sharp",
+  "borderPill": "Pill",
+  "textSize": "Text size",
+  "previewText": "The quick brown fox jumps over the lazy dog.",
+  "language": "Language",
+  "languageSystem": "System default",
+  "resetDefaults": "Reset to defaults",
+  "settingsSaved": "Settings saved",
+
+  "accentBlue": "Blue",
+  "accentTeal": "Teal",
+  "accentGreen": "Green",
+  "accentPurple": "Purple",
+  "accentOrange": "Orange",
+  "accentPink": "Pink",
+
+  "bgDefault": "Default",
+  "bgWhite": "White",
+  "bgWarm": "Warm",
+  "bgMint": "Mint",
+  "bgLavender": "Lavender",
+
+  "langEnglish": "English",
+  "langMarathi": "मराठी"
+}

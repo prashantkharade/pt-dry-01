@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pt_kharade_customer/l10n/app_localizations.dart';
 import '../../core/auth/auth_store.dart';
 import '../../core/api/api_client.dart';
+import '../../core/settings/settings_store.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -22,8 +24,10 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
     try {
-      // Touch /users/me to confirm the token is still valid.
-      await ApiClient.me();
+      // Touch /users/me to confirm the token is still valid, and use the
+      // response to hydrate account-level personalization (language/theme).
+      final user = await ApiClient.me();
+      await SettingsStore.instance.hydrateFromServer(user);
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/home');
     } catch (_) {
@@ -35,17 +39,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    final t = AppLocalizations.of(context);
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FlutterLogo(size: 64),
-            SizedBox(height: 16),
-            Text('PT Kharade Drycleaners',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
-            SizedBox(height: 8),
-            CircularProgressIndicator(),
+            const FlutterLogo(size: 64),
+            const SizedBox(height: 16),
+            Text(t.brandFull,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            const CircularProgressIndicator(),
           ],
         ),
       ),

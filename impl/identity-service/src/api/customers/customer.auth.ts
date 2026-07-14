@@ -24,6 +24,16 @@ export class CustomerAuth {
         AllowedRoles: ['SystemAdmin', 'Receptionist'],
     };
 
+    static readonly getMine: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${_baseContext}.GetMine`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Owner,
+        RequestType : RequestType.GetOne,
+        //  Any authenticated user (typically the Customer role from the app)
+        //  may read their own profile — no AllowedRoles restriction.
+    };
+
     static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${_baseContext}.GetById`,

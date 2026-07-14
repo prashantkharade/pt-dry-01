@@ -1,50 +1,58 @@
-import * as winston from 'winston';
-import 'winston-daily-rotate-file';
+import { ILogger } from './logger.interface';
+import { LOG_PROVIDER, IS_PRODUCTION, IS_TEST } from './logger.env';
+import { CustomDebugLogger } from './custom/custom.debug.logger';
+import { CustomProdLogger } from './custom/custom.prod.logger';
+import { WinstonDebugLogger } from './winston/winston.debug.logger';
+import { WinstonProdLogger } from './winston/winston.prod.logger';
 
 /////////////////////////////////////////////////////////////////////////
-//  Logger — a thin facade over Winston with a console transport in dev
-//  and rotating files in production. Keep the surface tiny (info / warn /
-//  error / debug) so callers don't depend on the underlying library.
+//  Logger facade. Selects a provider (Custom | Winston) from configuration
+//  and exposes a tiny static surface — info / warn / error / debug — so
+//  application code never touches the underlying logging library.
+//
+//  Provider is chosen from `Logger.Provider` in config.json (env override:
+//  LOGGER_PROVIDER). The debug/prod variant is chosen from NODE_ENV.
 /////////////////////////////////////////////////////////////////////////
 
-const consoleFormat = winston.format.printf(({ level, message, timestamp }) => {
-    return `[${timestamp}] [${level.toUpperCase()}] ${message}`;
-});
+class Logger {
 
-const transports: winston.transport[] = [
-    new winston.transports.Console({
-        format: winston.format.combine(
-            winston.format.colorize(),
-            winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-            consoleFormat,
-        ),
-    }),
-];
+    static getLogger = (): ILogger => {
+        let logger_: ILogger;
 
-if (process.env.NODE_ENV === 'production') {
-    transports.push(
-        new (winston.transports as any).DailyRotateFile({
-            filename     : './logs/identity-service-%DATE%.log',
-            datePattern  : 'YYYY-MM-DD',
-            zippedArchive: true,
-            maxSize      : '20m',
-            maxFiles     : '14d',
-            format       : winston.format.combine(
-                winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-                winston.format.json(),
-            ),
-        }),
-    );
+        switch (LOG_PROVIDER) {
+            case 'Winston':
+                logger_ = IS_PRODUCTION ? new WinstonProdLogger() : new WinstonDebugLogger();
+                break;
+            case 'Custom':
+            default:
+                logger_ = IS_PRODUCTION ? new CustomProdLogger() : new CustomDebugLogger();
+                break;
+        }
+        return logger_;
+    };
+
+    private static _logger: ILogger = this.getLogger();
+
+    static info = (str: string) => {
+        if (IS_TEST) { return; }
+        this._logger?.info(str);
+    };
+
+    static error = (str: string) => {
+        if (IS_TEST) { return; }
+        this._logger?.error(str);
+    };
+
+    static warn = (str: string) => {
+        if (IS_TEST) { return; }
+        this._logger?.warn(str);
+    };
+
+    static debug = (str: string) => {
+        if (IS_TEST) { return; }
+        this._logger?.debug(str);
+    };
+
 }
 
-const _logger = winston.createLogger({
-    level: (process.env.LOG_LEVEL ?? 'info').toLowerCase(),
-    transports,
-});
-
-export const logger = {
-    info : (message: string) => { if (process.env.NODE_ENV !== 'test') _logger.info(message); },
-    warn : (message: string) => { if (process.env.NODE_ENV !== 'test') _logger.warn(message); },
-    error: (message: string) => { if (process.env.NODE_ENV !== 'test') _logger.error(message); },
-    debug: (message: string) => { if (process.env.NODE_ENV !== 'test') _logger.debug(message); },
-};
+export { Logger as logger };

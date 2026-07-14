@@ -97,6 +97,32 @@ class ApiClient {
     return (r as Map).cast<String, dynamic>();
   }
 
+  /// Persists the logged-in user's personalization to identity-service so it
+  /// follows the account across devices. Both fields are optional — send only
+  /// what changed. `PreferredLanguage` is a 2-letter code; `ThemePrefs` is a
+  /// free-form JSON blob (we store mode/accent/background/textScale).
+  static Future<void> updateMe({
+    String? preferredLanguage,
+    Map<String, dynamic>? themePrefs,
+  }) async {
+    await _patch(identityBase, '/users/me', {
+      if (preferredLanguage != null) 'PreferredLanguage': preferredLanguage,
+      if (themePrefs != null) 'ThemePrefs': themePrefs,
+    }, auth: true);
+  }
+
+  /// The logged-in user's customer profile (identity-service links a customer
+  /// to the user at OTP login). Returns null if none exists yet.
+  static Future<Map<String, dynamic>?> customerMe() async {
+    try {
+      final r = await _get(identityBase, '/customers/me', auth: true);
+      return (r as Map).cast<String, dynamic>();
+    } on ApiException catch (e) {
+      if (e.status == 404) return null;
+      rethrow;
+    }
+  }
+
   // ---- Catalog & pricing (catalog-pricing-service) ----
   static Future<List<Map<String, dynamic>>> services() async {
     final r = await _get(catalogPricingBase, '/catalog/service-types', auth: true);

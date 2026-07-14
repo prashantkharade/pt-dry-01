@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pt_kharade_customer/l10n/app_localizations.dart';
 import '../../core/api/api_client.dart';
 
 class OrderDetailScreen extends StatefulWidget {
@@ -21,8 +22,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Order')),
+      appBar: AppBar(title: Text(t.orderTitle)),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _f,
         builder: (context, snap) {
@@ -32,7 +34,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           if (!snap.hasData) {
             return Padding(
               padding: const EdgeInsets.all(24),
-              child: Text('Error: ${snap.error}'),
+              child: Text(t.errorWithMessage('${snap.error}')),
             );
           }
           final o = snap.data!;
@@ -59,17 +61,17 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             ],
                           )),
                       const Divider(),
-                      _row('Subtotal', _inr(num.tryParse('${o['SubtotalInr']}'))),
-                      _row('Delivery', _inr(num.tryParse('${o['DeliveryChargeInr']}'))),
-                      _row('Express', _inr(num.tryParse('${o['ExpressChargeInr']}'))),
-                      _row('GST', _inr(num.tryParse('${o['GstInr']}'))),
-                      _row('Total', _inr(num.tryParse('${o['TotalInr']}')), bold: true),
+                      _row(t.subtotal, _inr(num.tryParse('${o['SubtotalInr']}'))),
+                      _row(t.delivery, _inr(num.tryParse('${o['DeliveryChargeInr']}'))),
+                      _row(t.expressLine, _inr(num.tryParse('${o['ExpressChargeInr']}'))),
+                      _row(t.gst, _inr(num.tryParse('${o['GstInr']}'))),
+                      _row(t.total, _inr(num.tryParse('${o['TotalInr']}')), bold: true),
                     ],
                   ),
                 ),
               ),
               const SizedBox(height: 16),
-              const Text('Timeline', style: TextStyle(fontWeight: FontWeight.w600)),
+              Text(t.timeline, style: const TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
               ...history.map((h) => ListTile(
                     leading: const Icon(Icons.circle, size: 12),

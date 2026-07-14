@@ -1,13 +1,19 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { page } from '$app/stores';
+  import { loadSettings } from '$lib/settings.svelte';
+  import { t } from '$lib/i18n';
   let { children, data } = $props();
   const user = $derived(data.sessionUser);
 
+  onMount(() => loadSettings());
+
   const nav = [
-    { href: '/dashboard', label: 'Dashboard' },
-    { href: '/orders', label: 'Orders' },
-    { href: '/orders/new', label: 'New Order' },
-    { href: '/customers', label: 'Customers' },
+    { href: '/dashboard', key: 'nav.dashboard' },
+    { href: '/orders', key: 'nav.orders' },
+    { href: '/orders/new', key: 'nav.newOrder' },
+    { href: '/customers', key: 'nav.customers' },
+    { href: '/settings', key: 'nav.settings' },
   ];
 </script>
 
@@ -15,21 +21,21 @@
   <aside class="side">
     <div class="brand">
       <strong>PT Kharade</strong><br/>
-      <span class="muted">Drycleaners &amp; Laundry</span>
+      <span class="muted">{t('brand.subtitle')}</span>
     </div>
     <nav>
       {#each nav as item (item.href)}
         <a
           class="nav-link"
           class:active={$page.url.pathname === item.href || $page.url.pathname.startsWith(item.href + '/')}
-          href={item.href}>{item.label}</a>
+          href={item.href}>{t(item.key)}</a>
       {/each}
     </nav>
     <div class="user">
       <div><strong>{user?.firstName} {user?.lastName ?? ''}</strong></div>
       <div class="muted small">{user?.roles?.join(' · ')}</div>
       <form method="post" action="/signout">
-        <button class="btn secondary small" type="submit">Sign out</button>
+        <button class="btn secondary small" type="submit">{t('action.signOut')}</button>
       </form>
     </div>
   </aside>
@@ -49,8 +55,8 @@
   .nav-link {
     padding: 0.6rem 0.85rem; border-radius: var(--radius); color: var(--text);
   }
-  .nav-link:hover { background: rgba(37, 99, 235, 0.08); text-decoration: none; }
-  .nav-link.active { background: var(--accent); color: var(--accent-fg); }
+  .nav-link:hover { background: hsl(var(--primary-hsl) / 0.08); text-decoration: none; }
+  .nav-link.active { background: var(--primary); color: var(--primary-foreground); }
   .user { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
   .user form { margin-top: 0.5rem; }
   .small { font-size: 0.85rem; }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pt_kharade_customer/l10n/app_localizations.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_store.dart';
 
@@ -33,6 +34,7 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Future<void> _loadItems() async {
+    final t = AppLocalizations.of(context);
     setState(() => _loadingItems = true);
     try {
       final items = await ApiClient.items(_service);
@@ -43,7 +45,7 @@ class _BookingScreenState extends State<BookingScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = e is ApiException ? e.message : 'Failed to load items';
+        _error = e is ApiException ? e.message : t.failedLoadItems;
         _loadingItems = false;
       });
     }
@@ -55,6 +57,7 @@ class _BookingScreenState extends State<BookingScreen> {
       .toList();
 
   Future<void> _refreshQuote() async {
+    final t = AppLocalizations.of(context);
     final items = _quoteItems();
     if (items.isEmpty) {
       setState(() => _quote = null);
@@ -70,20 +73,19 @@ class _BookingScreenState extends State<BookingScreen> {
       );
       setState(() { _quote = q; _error = null; });
     } catch (e) {
-      setState(() => _error = e is ApiException ? e.message : 'Quote failed');
+      setState(() => _error = e is ApiException ? e.message : t.quoteFailed);
     }
   }
 
   Future<void> _place() async {
+    final t = AppLocalizations.of(context);
     setState(() { _placing = true; _error = null; });
     try {
-      var customerId = AuthStore.instance.customerId;
+      // identity-service links a customer profile to the user at OTP login;
+      // resolve (and cache) it via /customers/me.
+      final customerId = await AuthStore.instance.ensureCustomerId();
       if (customerId == null) {
-        // The identity-service auto-provisions a customer profile on OTP login;
-        // a follow-up call to /users/me returns the userId, but for the slice
-        // we ask the user to enter the customer id assigned by the admin until
-        // a /customers/me endpoint is added (TODO in identity-service).
-        _error = 'Set up your customer profile via the admin portal first.';
+        _error = t.setupProfileFirst;
         setState(() => _placing = false);
         return;
       }
@@ -98,7 +100,7 @@ class _BookingScreenState extends State<BookingScreen> {
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/orders/${order['id']}');
     } catch (e) {
-      setState(() => _error = e is ApiException ? e.message : 'Failed to place order');
+      setState(() => _error = e is ApiException ? e.message : t.failedPlaceOrder);
     } finally {
       if (mounted) setState(() => _placing = false);
     }
@@ -106,9 +108,10 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final inr = (num? n) => '₹${(n ?? 0).toStringAsFixed(0)}';
+    final t = AppLocalizations.of(context);
+    String inr(num? n) => '₹${(n ?? 0).toStringAsFixed(0)}';
     return Scaffold(
-      appBar: AppBar(title: Text('Book — $_service')),
+      appBar: AppBar(title: Text(t.bookTitle(_service))),
       body: _loadingItems
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
@@ -169,21 +172,21 @@ class _BookingScreenState extends State<BookingScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Collection', style: TextStyle(fontWeight: FontWeight.w600)),
+                          Text(t.collection, style: const TextStyle(fontWeight: FontWeight.w600)),
                           SegmentedButton<String>(
-                            segments: const [
-                              ButtonSegment(value: 'DropAtShop', label: Text('Drop at shop')),
-                              ButtonSegment(value: 'HomePickup', label: Text('Home pickup')),
+                            segments: [
+                              ButtonSegment(value: 'DropAtShop', label: Text(t.dropAtShop)),
+                              ButtonSegment(value: 'HomePickup', label: Text(t.homePickup)),
                             ],
                             selected: {_channel},
                             onSelectionChanged: (s) => setState(() => _channel = s.first),
                           ),
                           const SizedBox(height: 8),
-                          const Text('Delivery', style: TextStyle(fontWeight: FontWeight.w600)),
+                          Text(t.delivery, style: const TextStyle(fontWeight: FontWeight.w600)),
                           SegmentedButton<String>(
-                            segments: const [
-                              ButtonSegment(value: 'CustomerPickup', label: Text('Pickup at shop')),
-                              ButtonSegment(value: 'HomeDelivery', label: Text('Home delivery')),
+                            segments: [
+                              ButtonSegment(value: 'CustomerPickup', label: Text(t.pickupAtShop)),
+                              ButtonSegment(value: 'HomeDelivery', label: Text(t.homeDelivery)),
                             ],
                             selected: {_delivery},
                             onSelectionChanged: (s) => setState(() => _delivery = s.first),
@@ -191,7 +194,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           SwitchListTile(
                             value: _express,
                             onChanged: (v) => setState(() => _express = v),
-                            title: const Text('Express / same-day (+25%)'),
+                            title: Text(t.express),
                             contentPadding: EdgeInsets.zero,
                           ),
                         ],
@@ -206,7 +209,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Price preview', style: TextStyle(fontWeight: FontWeight.w600)),
+                            Text(t.pricePreview, style: const TextStyle(fontWeight: FontWeight.w600)),
                             const SizedBox(height: 8),
                             ...((_quote!['Lines'] as List).cast<Map>()).map(
                               (l) => Row(
@@ -218,12 +221,12 @@ class _BookingScreenState extends State<BookingScreen> {
                               ),
                             ),
                             const Divider(),
-                            _row('Subtotal', inr(_quote!['SubtotalInr'] as num)),
-                            _row('Delivery', inr(_quote!['DeliveryChargeInr'] as num)),
-                            _row('Express', inr(_quote!['ExpressChargeInr'] as num)),
-                            _row('GST', inr(_quote!['GstInr'] as num)),
+                            _row(t.subtotal, inr(_quote!['SubtotalInr'] as num)),
+                            _row(t.delivery, inr(_quote!['DeliveryChargeInr'] as num)),
+                            _row(t.expressLine, inr(_quote!['ExpressChargeInr'] as num)),
+                            _row(t.gst, inr(_quote!['GstInr'] as num)),
                             const SizedBox(height: 4),
-                            _row('Total', inr(_quote!['TotalInr'] as num), bold: true),
+                            _row(t.total, inr(_quote!['TotalInr'] as num), bold: true),
                           ],
                         ),
                       ),
@@ -235,7 +238,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: _qty.isEmpty ? null : _refreshQuote,
-                          child: const Text('Get quote'),
+                          child: Text(t.getQuote),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -244,7 +247,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           onPressed: _placing || _qty.isEmpty ? null : _place,
                           child: _placing
                               ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                              : const Text('Place order'),
+                              : Text(t.placeOrder),
                         ),
                       ),
                     ],

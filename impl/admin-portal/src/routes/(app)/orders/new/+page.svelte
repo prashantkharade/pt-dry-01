@@ -157,17 +157,17 @@
     background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 0.85rem;
     border-radius: 999px; cursor: pointer; color: var(--text);
   }
-  .tab.active { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+  .tab.active { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
   .items td, .items th { vertical-align: middle; }
   .seg { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .opt {
     display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.75rem;
     border: 1px solid var(--border); border-radius: 999px; cursor: pointer;
   }
-  .opt.active { border-color: var(--accent); background: rgba(37,99,235,0.05); }
+  .opt.active { border-color: var(--primary); background: hsl(var(--primary-hsl) / 0.06); }
   .quote table { margin-bottom: 0.5rem; }
   .quote .right { text-align: right; }
-  .quote .total td { border-top: 2px solid var(--text); }
-  .customer-card { padding: 0.5rem; background: rgba(37,99,235,0.05); border-radius: var(--radius); }
+  .quote .total td { border-top: 2px solid var(--foreground); }
+  .customer-card { padding: 0.5rem; background: hsl(var(--primary-hsl) / 0.06); border-radius: var(--radius); }
   .small { font-size: 0.85rem; }
 </style>

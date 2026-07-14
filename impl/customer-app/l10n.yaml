@@ -1,0 +1,7 @@
+# Flutter gen-l10n configuration. Generates AppLocalizations into the source
+# tree (non-synthetic) so it can be imported as `l10n/app_localizations.dart`.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-dir: lib/l10n
+nullable-getter: false

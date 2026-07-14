@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pt_kharade_customer/l10n/app_localizations.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_store.dart';
 
@@ -18,15 +19,16 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
   }
 
   Future<List<Map<String, dynamic>>> _load() async {
-    final id = AuthStore.instance.customerId;
+    final id = await AuthStore.instance.ensureCustomerId();
     if (id == null) return [];
     return ApiClient.myOrders(id);
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('My orders')),
+      appBar: AppBar(title: Text(t.myOrdersTitle)),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _f,
         builder: (context, snap) {
@@ -36,12 +38,12 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
           if (snap.hasError) {
             return Padding(
               padding: const EdgeInsets.all(24),
-              child: Text('Error: ${snap.error}'),
+              child: Text(t.errorWithMessage('${snap.error}')),
             );
           }
           final items = snap.data ?? [];
           if (items.isEmpty) {
-            return const Center(child: Text('No orders yet — book your first service.'));
+            return Center(child: Text(t.noOrders));
           }
           return ListView.builder(
             padding: const EdgeInsets.all(8),

@@ -16,7 +16,10 @@ export interface QuoteLineInput {
 }
 
 export interface QuoteRequestModel {
-    TenantId        : string;
+    // NOTE: TenantId is intentionally NOT part of the request body. The
+    // pricing-service derives the tenant from the caller's JWT
+    // (request.currentUser.TenantId) and its validator rejects an
+    // unknown "TenantId" key. Sending it here yields a 400 → 422.
     ServiceTypeCode : string;
     IsVendor        : boolean;
     IsExpress       : boolean;
