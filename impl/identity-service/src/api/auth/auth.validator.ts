@@ -16,9 +16,14 @@ export class AuthValidator {
 
     public static validateOtpSend = async (request: express.Request): Promise<OtpSendModel> => {
         try {
-            const schema = joi.object({ Phone: PhoneSchema.required() });
+            //Language picks the SMS template — a Marathi customer gets the
+            //Marathi OTP text. Defaults to English.
+            const schema = joi.object({
+                Phone   : PhoneSchema.required(),
+                Language: joi.string().valid('en', 'mr').optional(),
+            });
             const value  = await schema.validateAsync(request.body, { abortEarly: false });
-            return { Phone: value.Phone };
+            return { Phone: value.Phone, Language: value.Language };
         } catch (error) {
             ErrorHandler.handleValidationError(error);
             throw error;

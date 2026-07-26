@@ -11,6 +11,7 @@ import { UserRole }        from './models/user.role.model';
 import { Customer }        from './models/customer.model';
 import { CustomerAddress } from './models/customer.address.model';
 import { ClientApp }       from './models/client.app.model';
+import { UserDevice }      from './models/user.device.model';
 
 /////////////////////////////////////////////////////////////////////////
 //  TypeORM DataSource singleton. Dialect (postgres / mysql / sqlite) is
@@ -25,7 +26,7 @@ import { ClientApp }       from './models/client.app.model';
 //  Use Source.getRepository(Entity) — do not construct another DataSource.
 /////////////////////////////////////////////////////////////////////////
 
-const ENTITIES = [Tenant, Branch, User, Role, UserRole, Customer, CustomerAddress, ClientApp];
+const ENTITIES = [Tenant, Branch, User, Role, UserRole, Customer, CustomerAddress, ClientApp, UserDevice];
 
 let _source: DataSource | null = null;
 

@@ -7,7 +7,10 @@ export const register = (app: express.Application): void => {
     const router     = express.Router();
     const controller = new NotificationController();
 
-    router.post('/send', ...context(NotificationAuth.send), controller.send);
+    router.post('/send'         , ...context(NotificationAuth.send)        , controller.send);
+    router.post('/send-template', ...context(NotificationAuth.sendTemplate), controller.sendTemplate);
+    router.get ('/logs'         , ...context(NotificationAuth.readLogs)    , controller.logs);
+    router.get ('/queue-stats'  , ...context(NotificationAuth.readLogs)    , controller.queueStats);
 
     app.use('/api/v1/notifications', router);
 };

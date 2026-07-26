@@ -261,4 +261,102 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get langMarathi => 'मराठी';
+
+  @override
+  String get newOrder => 'नवीन ऑर्डर';
+
+  @override
+  String get noOrdersHint => 'तुम्ही ऑर्डर दिल्यावर ती इथे दिसेल.';
+
+  @override
+  String get trackOrder => 'ऑर्डर ट्रॅक करा';
+
+  @override
+  String get trackingTitle => 'ऑर्डर ट्रॅकिंग';
+
+  @override
+  String get yourOrder => 'तुमची ऑर्डर';
+
+  @override
+  String moreCount(int count) {
+    return 'आणखी $count';
+  }
+
+  @override
+  String get pickup => 'पिकअप';
+
+  @override
+  String get orderDelivery => 'डिलिव्हरी';
+
+  @override
+  String collectedItems(int count) {
+    return '$count वस्तू घेतल्या';
+  }
+
+  @override
+  String partnerOnWay(String name) {
+    return '$name येत आहेत';
+  }
+
+  @override
+  String get callPartner => 'कॉल करा';
+
+  @override
+  String get viewReceipt => 'पावती पहा';
+
+  @override
+  String get downloadReceipt => 'पावती डाउनलोड करा';
+
+  @override
+  String get orderCancelled => 'ही ऑर्डर रद्द केली गेली.';
+
+  @override
+  String get somethingWrong => 'काहीतरी चूक झाली';
+
+  @override
+  String get tryAgain => 'पुन्हा प्रयत्न करा';
+
+  @override
+  String get refresh => 'रिफ्रेश';
+
+  @override
+  String get chooseItems => 'वस्तू निवडा';
+
+  @override
+  String get howToStart => 'कशी सुरुवात करायची?';
+
+  @override
+  String get howToReturn => 'कशी परत करायची?';
+
+  @override
+  String get expressHint => 'लवकर तयार, +२५%';
+
+  @override
+  String get whereAndWhen => 'कुठे आणि कधी';
+
+  @override
+  String get yourSociety => 'तुमची सोसायटी';
+
+  @override
+  String get selectSociety => 'तुमची सोसायटी निवडा';
+
+  @override
+  String get noSocietiesHint =>
+      'अजून डिलिव्हरी क्षेत्रे सेट केलेली नाहीत. आत्ता दुकानात द्या.';
+
+  @override
+  String get noSlotsThatDay =>
+      'त्या दिवशी स्लॉट उपलब्ध नाही — दुसरी तारीख निवडा.';
+
+  @override
+  String get addItemsFirst => 'किमान एक वस्तू जोडा.';
+
+  @override
+  String get chooseSocietyFirst => 'तुमची सोसायटी निवडा.';
+
+  @override
+  String get choosePickupSlot => 'पिकअप स्लॉट निवडा.';
+
+  @override
+  String get chooseDeliverySlot => 'डिलिव्हरी स्लॉट निवडा.';
 }

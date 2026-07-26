@@ -583,6 +583,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'मराठी'**
   String get langMarathi;
+
+  /// No description provided for @newOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'New order'**
+  String get newOrder;
+
+  /// No description provided for @noOrdersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your orders will appear here once you place one.'**
+  String get noOrdersHint;
+
+  /// No description provided for @trackOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Track order'**
+  String get trackOrder;
+
+  /// No description provided for @trackingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order tracking'**
+  String get trackingTitle;
+
+  /// No description provided for @yourOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Your order'**
+  String get yourOrder;
+
+  /// No description provided for @moreCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} more'**
+  String moreCount(int count);
+
+  /// No description provided for @pickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup'**
+  String get pickup;
+
+  /// No description provided for @orderDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery'**
+  String get orderDelivery;
+
+  /// No description provided for @collectedItems.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} item(s) collected'**
+  String collectedItems(int count);
+
+  /// No description provided for @partnerOnWay.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is on the way'**
+  String partnerOnWay(String name);
+
+  /// No description provided for @callPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get callPartner;
+
+  /// No description provided for @viewReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'View receipt'**
+  String get viewReceipt;
+
+  /// No description provided for @downloadReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Download receipt'**
+  String get downloadReceipt;
+
+  /// No description provided for @orderCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'This order was cancelled.'**
+  String get orderCancelled;
+
+  /// No description provided for @somethingWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWrong;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @chooseItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose items'**
+  String get chooseItems;
+
+  /// No description provided for @howToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'How should we start?'**
+  String get howToStart;
+
+  /// No description provided for @howToReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'How should we return it?'**
+  String get howToReturn;
+
+  /// No description provided for @expressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready faster, +25%'**
+  String get expressHint;
+
+  /// No description provided for @whereAndWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Where & when'**
+  String get whereAndWhen;
+
+  /// No description provided for @yourSociety.
+  ///
+  /// In en, this message translates to:
+  /// **'Your society'**
+  String get yourSociety;
+
+  /// No description provided for @selectSociety.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your society'**
+  String get selectSociety;
+
+  /// No description provided for @noSocietiesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No delivery areas are set up yet. Choose drop at shop for now.'**
+  String get noSocietiesHint;
+
+  /// No description provided for @noSlotsThatDay.
+  ///
+  /// In en, this message translates to:
+  /// **'No slots available that day — try another date.'**
+  String get noSlotsThatDay;
+
+  /// No description provided for @addItemsFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one item.'**
+  String get addItemsFirst;
+
+  /// No description provided for @chooseSocietyFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your society.'**
+  String get chooseSocietyFirst;
+
+  /// No description provided for @choosePickupSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a pickup slot.'**
+  String get choosePickupSlot;
+
+  /// No description provided for @chooseDeliverySlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a delivery slot.'**
+  String get chooseDeliverySlot;
 }
 
 class _AppLocalizationsDelegate

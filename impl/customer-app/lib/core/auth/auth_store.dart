@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../api/api_client.dart';
+import '../push/push_service.dart';
 
 class AuthStore extends ChangeNotifier {
   AuthStore._();
@@ -53,6 +54,12 @@ class AuthStore extends ChangeNotifier {
     if (_name != null) await _storage.write(key: _kName, value: _name);
     if (_phone != null) await _storage.write(key: _kPhone, value: _phone);
     notifyListeners();
+
+    // Register for push now that we have a session. A token registered before
+    // login belongs to nobody, so this is the earliest correct moment.
+    // Deliberately not awaited: it prompts for permission and hits the network,
+    // and login must not sit behind either.
+    unawaited(PushService.instance.register());
   }
 
   Future<void> setCustomerId(String id) async {
@@ -74,6 +81,9 @@ class AuthStore extends ChangeNotifier {
   }
 
   Future<void> clear() async {
+    // Drop the FCM token BEFORE the session goes, or the next person to use
+    // this phone keeps receiving the previous user's notifications.
+    await PushService.instance.unregister();
     _accessToken = null;
     _refreshToken = null;
     _userId = null;

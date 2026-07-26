@@ -260,4 +260,102 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get langMarathi => 'मराठी';
+
+  @override
+  String get newOrder => 'New order';
+
+  @override
+  String get noOrdersHint => 'Your orders will appear here once you place one.';
+
+  @override
+  String get trackOrder => 'Track order';
+
+  @override
+  String get trackingTitle => 'Order tracking';
+
+  @override
+  String get yourOrder => 'Your order';
+
+  @override
+  String moreCount(int count) {
+    return '$count more';
+  }
+
+  @override
+  String get pickup => 'Pickup';
+
+  @override
+  String get orderDelivery => 'Delivery';
+
+  @override
+  String collectedItems(int count) {
+    return '$count item(s) collected';
+  }
+
+  @override
+  String partnerOnWay(String name) {
+    return '$name is on the way';
+  }
+
+  @override
+  String get callPartner => 'Call';
+
+  @override
+  String get viewReceipt => 'View receipt';
+
+  @override
+  String get downloadReceipt => 'Download receipt';
+
+  @override
+  String get orderCancelled => 'This order was cancelled.';
+
+  @override
+  String get somethingWrong => 'Something went wrong';
+
+  @override
+  String get tryAgain => 'Try again';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get chooseItems => 'Choose items';
+
+  @override
+  String get howToStart => 'How should we start?';
+
+  @override
+  String get howToReturn => 'How should we return it?';
+
+  @override
+  String get expressHint => 'Ready faster, +25%';
+
+  @override
+  String get whereAndWhen => 'Where & when';
+
+  @override
+  String get yourSociety => 'Your society';
+
+  @override
+  String get selectSociety => 'Select your society';
+
+  @override
+  String get noSocietiesHint =>
+      'No delivery areas are set up yet. Choose drop at shop for now.';
+
+  @override
+  String get noSlotsThatDay =>
+      'No slots available that day — try another date.';
+
+  @override
+  String get addItemsFirst => 'Add at least one item.';
+
+  @override
+  String get chooseSocietyFirst => 'Choose your society.';
+
+  @override
+  String get choosePickupSlot => 'Choose a pickup slot.';
+
+  @override
+  String get chooseDeliverySlot => 'Choose a delivery slot.';
 }

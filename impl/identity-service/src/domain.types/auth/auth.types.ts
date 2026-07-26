@@ -4,6 +4,7 @@
 
 export interface OtpSendModel {
     Phone: string;
+    Language?: 'en' | 'mr';
 }
 
 export interface OtpVerifyModel {

@@ -14,6 +14,8 @@ const en: Dict = {
   'nav.orders': 'Orders',
   'nav.newOrder': 'New Order',
   'nav.customers': 'Customers',
+  'nav.delivery': 'Delivery',
+  'nav.myRuns': 'My Runs',
   'nav.settings': 'Settings',
   'action.signOut': 'Sign out',
 
@@ -65,6 +67,8 @@ const mr: Dict = {
   'nav.orders': 'ऑर्डर्स',
   'nav.newOrder': 'नवीन ऑर्डर',
   'nav.customers': 'ग्राहक',
+  'nav.delivery': 'डिलिव्हरी',
+  'nav.myRuns': 'माझ्या फेऱ्या',
   'nav.settings': 'सेटिंग्ज',
   'action.signOut': 'साइन आउट',
 

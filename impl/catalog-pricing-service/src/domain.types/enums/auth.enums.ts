@@ -27,6 +27,16 @@ export interface AuthOptions {
     RequestType    : RequestType;
     AllowAnonymous?: boolean;
     AllowedRoles?  : string[];
+    /**
+     * Restrict a route to specific client apps by ClientCode, e.g.
+     * ['NOTIFICATIONS-SERVICE']. Use for service-to-service endpoints that
+     * run without a user token: AllowAnonymous alone would open them to every
+     * holder of a valid key, including the customer app.
+     *
+     * Omitted means any registered client may call (subject to the user
+     * checks that follow).
+     */
+    AllowedClients?: string[];
 }
 
 export const DefaultAuthOptions: Omit<AuthOptions, 'Context'> = {

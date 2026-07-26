@@ -2,6 +2,7 @@ import express from 'express';
 import { container } from 'tsyringe';
 import { AuthService } from '../../database/typeorm/services/auth.service';
 import { OtpService } from '../../database/typeorm/services/otp.service';
+import { TenantService } from '../../database/typeorm/services/tenant.service';
 import { AuthValidator } from './auth.validator';
 import { ResponseHandler } from '../../common/handlers/response.handler';
 import { ErrorHandler } from '../../common/api.error';
@@ -15,11 +16,17 @@ export class AuthController {
 
     private _authService = container.resolve(AuthService);
     private _otpService  = container.resolve(OtpService);
+    private _tenants     = container.resolve(TenantService);
 
     public otpSend = async (request: express.Request, response: express.Response): Promise<express.Response> => {
         try {
             const model  = await AuthValidator.validateOtpSend(request);
-            const result = await this._otpService.send(model.Phone);
+            //Pre-auth route: no token, so there is no tenant in scope. Resolve
+            //the default tenant — the SMS template is tenant-scoped, and this
+            //is a single-tenant deployment.
+            const tenant = await this._tenants.getDefaultTenant();
+            const language = (model.Language === 'mr' ? 'mr' : 'en') as 'en' | 'mr';
+            const result = await this._otpService.send(model.Phone, tenant.id, language);
             return ResponseHandler.success(request, response, 'OTP sent successfully', 200, result);
         } catch (error) {
             return ResponseHandler.handleError(request, response, error);

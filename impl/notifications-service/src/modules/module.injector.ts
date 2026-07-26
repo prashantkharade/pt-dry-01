@@ -4,9 +4,11 @@ import { SmsChannel } from './channels/sms.channel';
 import { EmailChannel } from './channels/email.channel';
 import { PushChannel } from './channels/push.channel';
 import { WhatsAppChannel } from './channels/whatsapp.channel';
+import { IdentityServiceConnector } from './identity/identity.service.connector';
 
 export class ModuleInjector {
     public static registerInjections = (container: DependencyContainer): void => {
+        container.registerSingleton(IdentityServiceConnector);
         container.registerSingleton(SmsChannel);
         container.registerSingleton(EmailChannel);
         container.registerSingleton(PushChannel);

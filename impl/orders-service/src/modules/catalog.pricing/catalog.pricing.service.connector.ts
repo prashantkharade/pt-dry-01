@@ -57,7 +57,7 @@ export class CatalogPricingServiceConnector {
             const res = await axios.post(`${this.baseUrl()}/api/v1/pricing/quote`, input, {
                 headers: {
                     Authorization : `Bearer ${accessToken}`,
-                    'x-api-key'   : ConfigurationManager.getEnv('API_KEY_ORDERS_SERVICE', 'dev-orders-service-key'),
+                    'x-api-key'   : ConfigurationManager.getEnv('API_KEY_ORDERS_SERVICE', 'orders-service-dev-key'),
                 },
                 timeout: 5000,
             });

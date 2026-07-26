@@ -6,6 +6,7 @@ import { OtpService }      from '../database/typeorm/services/otp.service';
 import { JwtService }      from '../database/typeorm/services/jwt.service';
 import { TenantService }   from '../database/typeorm/services/tenant.service';
 import { RoleService }     from '../database/typeorm/services/role.service';
+import { NotificationsServiceConnector } from './notifications/notifications.service.connector';
 
 /////////////////////////////////////////////////////////////////////////
 //  Domain service singletons registered with the DI container. Plug
@@ -19,6 +20,7 @@ export class ModuleInjector {
         container.registerSingleton(UserService);
         container.registerSingleton(CustomerService);
         container.registerSingleton(AuthService);
+        container.registerSingleton(NotificationsServiceConnector);
         container.registerSingleton(OtpService);
         container.registerSingleton(JwtService);
         container.registerSingleton(TenantService);

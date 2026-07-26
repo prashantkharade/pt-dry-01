@@ -11,7 +11,23 @@ export class CommonMiddlewares {
 
     public static setup = async (app: express.Application): Promise<void> => {
         app.use(express.urlencoded({ limit: '50mb', extended: true }));
-        app.use(express.json({ limit: '50mb' }));
+
+        //Webhook HMACs are computed over the exact bytes the provider sent.
+        //express.json() parses and discards that buffer, and re-serializing
+        //req.body will not reproduce it (key order, whitespace and unicode
+        //escaping all differ), so the signature would never match. Capture it
+        //here — `verify` is the only hook that sees the raw bytes.
+        //
+        //Kept narrow on purpose: retaining a 50mb buffer on every request just
+        //to serve two webhook routes is pure memory waste.
+        app.use(express.json({
+            limit  : '50mb',
+            verify : (req: express.Request, _res, buf: Buffer) => {
+                if (req.path.startsWith('/api/v1/webhooks/')) {
+                    req.rawBody = buf;
+                }
+            },
+        }));
         app.use((helmet as any)());
         app.use((cors as any)({ origin: true, credentials: true }));
         app.use((compression as any)());

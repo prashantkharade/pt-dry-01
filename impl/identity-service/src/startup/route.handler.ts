@@ -3,6 +3,7 @@ import { register as registerAuthRoutes }     from '../api/auth/auth.routes';
 import { register as registerUserRoutes }     from '../api/users/user.routes';
 import { register as registerCustomerRoutes } from '../api/customers/customer.routes';
 import { register as registerTenantRoutes }   from '../api/tenants/tenant.routes';
+import { register as registerDeviceRoutes }   from '../api/devices/device.routes';
 import { ConfigurationManager } from '../config/configuration.manager';
 
 /////////////////////////////////////////////////////////////////////////
@@ -32,6 +33,7 @@ export class Router {
         registerUserRoutes(this._app);
         registerCustomerRoutes(this._app);
         registerTenantRoutes(this._app);
+        registerDeviceRoutes(this._app);
 
         return true;
     };

@@ -62,6 +62,9 @@ export class Seeder {
             { Code: 'Receptionist' , Name: 'Receptionist'  , Description: 'Order intake, billing, status updates' },
             { Code: 'Customer'     , Name: 'Customer'      , Description: 'Self-service via mobile/web app' },
             { Code: 'Vendor'       , Name: 'Vendor'        , Description: 'B2B customer with credit terms' },
+            //  Pickup/drop staff. They sign in to the admin portal and see only
+            //  their own runs — see orders-service DeliveryAuth.myRuns.
+            { Code: 'DeliveryPartner', Name: 'Delivery Partner', Description: 'Collects and returns garments; sees only their own runs' },
         ];
         for (const r of wanted) {
             const existing = await repo.findOne({ where: { Code: r.Code } });
@@ -114,12 +117,13 @@ export class Seeder {
     private static seedClientApps = async (): Promise<void> => {
         const repo = Source.getRepository(ClientApp);
         const want = [
-            { ClientCode: 'ADMIN-PORTAL'              , Name: 'Admin Portal'         , ApiKey: ConfigurationManager.getEnv('API_KEY_ADMIN_PORTAL'        , 'dev-admin-portal-key') },
-            { ClientCode: 'CUSTOMER-APP'              , Name: 'Customer App'         , ApiKey: ConfigurationManager.getEnv('API_KEY_CUSTOMER_APP'        , 'dev-customer-app-key') },
-            { ClientCode: 'ORDERS-SERVICE'            , Name: 'Orders Service'       , ApiKey: ConfigurationManager.getEnv('API_KEY_ORDERS_SERVICE'      , 'dev-orders-service-key') },
-            { ClientCode: 'CATALOG-PRICING-SERVICE'   , Name: 'Catalog & Pricing'    , ApiKey: ConfigurationManager.getEnv('API_KEY_CATALOG_PRICING_SERVICE', 'dev-catalog-pricing-service-key') },
-            { ClientCode: 'PAYMENTS-SERVICE'          , Name: 'Payments Service'     , ApiKey: ConfigurationManager.getEnv('API_KEY_PAYMENTS_SERVICE'    , 'dev-payments-service-key') },
-            { ClientCode: 'NOTIFICATIONS-SERVICE'     , Name: 'Notifications Service', ApiKey: ConfigurationManager.getEnv('API_KEY_NOTIFICATIONS_SERVICE', 'dev-notifications-service-key') },
+            { ClientCode: 'ADMIN-PORTAL'              , Name: 'Admin Portal'         , ApiKey: ConfigurationManager.getEnv('API_KEY_ADMIN_PORTAL'        , 'admin-portal-dev-key') },
+            { ClientCode: 'CUSTOMER-APP'              , Name: 'Customer App'         , ApiKey: ConfigurationManager.getEnv('API_KEY_CUSTOMER_APP'        , 'customer-app-dev-key') },
+            { ClientCode: 'IDENTITY-SERVICE'          , Name: 'Identity Service'     , ApiKey: ConfigurationManager.getEnv('API_KEY_IDENTITY_SERVICE'    , 'identity-service-dev-key') },
+            { ClientCode: 'ORDERS-SERVICE'            , Name: 'Orders Service'       , ApiKey: ConfigurationManager.getEnv('API_KEY_ORDERS_SERVICE'      , 'orders-service-dev-key') },
+            { ClientCode: 'CATALOG-PRICING-SERVICE'   , Name: 'Catalog & Pricing'    , ApiKey: ConfigurationManager.getEnv('API_KEY_CATALOG_PRICING_SERVICE', 'catalog-pricing-service-dev-key') },
+            { ClientCode: 'PAYMENTS-SERVICE'          , Name: 'Payments Service'     , ApiKey: ConfigurationManager.getEnv('API_KEY_PAYMENTS_SERVICE'    , 'payments-service-dev-key') },
+            { ClientCode: 'NOTIFICATIONS-SERVICE'     , Name: 'Notifications Service', ApiKey: ConfigurationManager.getEnv('API_KEY_NOTIFICATIONS_SERVICE', 'notifications-service-dev-key') },
         ];
         for (const w of want) {
             const ex = await repo.findOne({ where: { ClientCode: w.ClientCode } });

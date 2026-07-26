@@ -13,10 +13,16 @@ import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 
 export function userAuthenticator(options?: Partial<AuthOptions>) {
     return (req: express.Request, _res: express.Response, next: express.NextFunction): void => {
-        if (options?.AllowAnonymous) return next();
+        //AllowAnonymous means "a user token is not REQUIRED", not "ignore a
+        //token that is present". A route can be reached both by a service
+        //firing a domain event (no user) and by a signed-in human, and it
+        //needs to tell them apart — so parse a token when one is offered.
+        const header    = req.headers.authorization;
+        const hasToken  = Boolean(header?.startsWith('Bearer '));
+        const anonymous = Boolean(options?.AllowAnonymous);
 
-        const header = req.headers.authorization;
-        if (!header || !header.startsWith('Bearer ')) {
+        if (!hasToken) {
+            if (anonymous) return next();
             return next(new ApiError('Missing bearer token', HttpStatusCodes.UNAUTHORIZED));
         }
         const token = header.slice('Bearer '.length).trim();

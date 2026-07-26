@@ -6,6 +6,16 @@ import { logger }            from '../../logger/logger';
 import { Order } from './models/order.model';
 import { OrderItem } from './models/order.item.model';
 import { OrderStatusHistory } from './models/order.status.history.model';
+import { DeliveryZone } from './models/delivery.zone.model';
+import { DeliverySociety } from './models/delivery.society.model';
+import { DeliveryHub } from './models/delivery.hub.model';
+import { DeliveryPartner } from './models/delivery.partner.model';
+import { DeliverySlot } from './models/delivery.slot.model';
+import { DeliverySlotBooking } from './models/delivery.slot.booking.model';
+import { DeliveryChargeRate } from './models/delivery.charge.rate.model';
+import { DeliveryAssignment } from './models/delivery.assignment.model';
+import { PartnerZoneAssignment } from './models/partner.zone.assignment.model';
+import { PartnerSlotAssignment } from './models/partner.slot.assignment.model';
 
 /////////////////////////////////////////////////////////////////////////
 //  TypeORM DataSource singleton. Dialect (postgres / mysql / sqlite) is
@@ -16,7 +26,13 @@ import { OrderStatusHistory } from './models/order.status.history.model';
 //  database is auto-created if missing (postgres & mysql).
 /////////////////////////////////////////////////////////////////////////
 
-const ENTITIES = [Order, OrderItem, OrderStatusHistory];
+const ENTITIES = [
+    Order, OrderItem, OrderStatusHistory,
+    //Delivery domain — pickup + return legs, capacity, partners, routing.
+    DeliveryZone, DeliverySociety, DeliveryHub, DeliveryPartner,
+    DeliverySlot, DeliverySlotBooking, DeliveryChargeRate, DeliveryAssignment,
+    PartnerZoneAssignment, PartnerSlotAssignment,
+];
 
 let _source: DataSource | null = null;
 

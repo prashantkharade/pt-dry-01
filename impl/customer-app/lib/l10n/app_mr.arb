@@ -1,9 +1,7 @@
 {
   "@@locale": "mr",
-
   "appTitle": "पीटी खराडे",
   "brandFull": "पीटी खराडे ड्रायक्लीनर्स",
-
   "greeting": "नमस्कार, {name}!",
   "customer": "ग्राहक",
   "chooseService": "सेवा निवडा",
@@ -13,7 +11,6 @@
   "myOrders": "माझ्या ऑर्डर्स",
   "logout": "लॉग आउट",
   "settingsTooltip": "सेटिंग्ज",
-
   "signIn": "साइन इन",
   "welcome": "पीटी खराडेमध्ये आपले स्वागत आहे",
   "signInSubtitle": "पिकअप बुक करण्यासाठी, ऑर्डर ट्रॅक करण्यासाठी आणि पैसे भरण्यासाठी साइन इन करा.",
@@ -21,7 +18,6 @@
   "sendOtp": "OTP पाठवा",
   "invalidMobile": "10-अंकी भारतीय मोबाइल नंबर टाका",
   "failedSendOtp": "OTP पाठवण्यात अयशस्वी",
-
   "verifyOtp": "OTP पडताळा",
   "otpSentTo": "{phone} वर पाठवलेला 6-अंकी OTP टाका",
   "otpDevHint": "डेव्हलपमेंटमध्ये, OTP मूल्यासाठी identity-service लॉग तपासा.",
@@ -29,7 +25,6 @@
   "verifyContinue": "पडताळा आणि पुढे जा",
   "enter6Digit": "6-अंकी कोड टाका",
   "verificationFailed": "पडताळणी अयशस्वी",
-
   "bookTitle": "बुक करा — {service}",
   "collection": "संकलन",
   "dropAtShop": "दुकानात द्या",
@@ -49,14 +44,11 @@
   "quoteFailed": "कोट अयशस्वी",
   "setupProfileFirst": "प्रथम अ‍ॅडमिन पोर्टलद्वारे आपले ग्राहक प्रोफाइल सेट करा.",
   "failedPlaceOrder": "ऑर्डर देण्यात अयशस्वी",
-
   "myOrdersTitle": "माझ्या ऑर्डर्स",
   "noOrders": "अद्याप ऑर्डर नाही — आपली पहिली सेवा बुक करा.",
   "errorWithMessage": "त्रुटी: {message}",
-
   "orderTitle": "ऑर्डर",
   "timeline": "टाइमलाइन",
-
   "settings": "सेटिंग्ज",
   "appearance": "स्वरूप",
   "theme": "थीम",
@@ -76,20 +68,47 @@
   "languageSystem": "सिस्टम डीफॉल्ट",
   "resetDefaults": "डीफॉल्टवर रीसेट करा",
   "settingsSaved": "सेटिंग्ज जतन केल्या",
-
   "accentBlue": "निळा",
   "accentTeal": "टील",
   "accentGreen": "हिरवा",
   "accentPurple": "जांभळा",
   "accentOrange": "केशरी",
   "accentPink": "गुलाबी",
-
   "bgDefault": "डीफॉल्ट",
   "bgWhite": "पांढरा",
   "bgWarm": "उबदार",
   "bgMint": "मिंट",
   "bgLavender": "लॅव्हेंडर",
-
   "langEnglish": "English",
-  "langMarathi": "मराठी"
+  "langMarathi": "मराठी",
+  "newOrder": "नवीन ऑर्डर",
+  "noOrdersHint": "तुम्ही ऑर्डर दिल्यावर ती इथे दिसेल.",
+  "trackOrder": "ऑर्डर ट्रॅक करा",
+  "trackingTitle": "ऑर्डर ट्रॅकिंग",
+  "yourOrder": "तुमची ऑर्डर",
+  "moreCount": "आणखी {count}",
+  "pickup": "पिकअप",
+  "orderDelivery": "डिलिव्हरी",
+  "collectedItems": "{count} वस्तू घेतल्या",
+  "partnerOnWay": "{name} येत आहेत",
+  "callPartner": "कॉल करा",
+  "viewReceipt": "पावती पहा",
+  "downloadReceipt": "पावती डाउनलोड करा",
+  "orderCancelled": "ही ऑर्डर रद्द केली गेली.",
+  "somethingWrong": "काहीतरी चूक झाली",
+  "tryAgain": "पुन्हा प्रयत्न करा",
+  "refresh": "रिफ्रेश",
+  "chooseItems": "वस्तू निवडा",
+  "howToStart": "कशी सुरुवात करायची?",
+  "howToReturn": "कशी परत करायची?",
+  "expressHint": "लवकर तयार, +२५%",
+  "whereAndWhen": "कुठे आणि कधी",
+  "yourSociety": "तुमची सोसायटी",
+  "selectSociety": "तुमची सोसायटी निवडा",
+  "noSocietiesHint": "अजून डिलिव्हरी क्षेत्रे सेट केलेली नाहीत. आत्ता दुकानात द्या.",
+  "noSlotsThatDay": "त्या दिवशी स्लॉट उपलब्ध नाही — दुसरी तारीख निवडा.",
+  "addItemsFirst": "किमान एक वस्तू जोडा.",
+  "chooseSocietyFirst": "तुमची सोसायटी निवडा.",
+  "choosePickupSlot": "पिकअप स्लॉट निवडा.",
+  "chooseDeliverySlot": "डिलिव्हरी स्लॉट निवडा."
 }

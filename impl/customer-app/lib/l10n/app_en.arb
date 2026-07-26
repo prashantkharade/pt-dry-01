@@ -1,12 +1,14 @@
 {
   "@@locale": "en",
-
   "appTitle": "PT Kharade",
   "brandFull": "PT Kharade Drycleaners",
-
   "greeting": "Hello, {name}!",
   "@greeting": {
-    "placeholders": { "name": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "customer": "Customer",
   "chooseService": "Choose a service",
@@ -16,7 +18,6 @@
   "myOrders": "My Orders",
   "logout": "Log out",
   "settingsTooltip": "Settings",
-
   "signIn": "Sign in",
   "welcome": "Welcome to PT Kharade",
   "signInSubtitle": "Sign in to book pickup, track orders & pay.",
@@ -24,21 +25,27 @@
   "sendOtp": "Send OTP",
   "invalidMobile": "Enter a 10-digit Indian mobile number",
   "failedSendOtp": "Failed to send OTP",
-
   "verifyOtp": "Verify OTP",
   "otpSentTo": "Enter the 6-digit OTP sent to {phone}",
   "@otpSentTo": {
-    "placeholders": { "phone": { "type": "String" } }
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
   },
   "otpDevHint": "In development, check the identity-service logs for the OTP value.",
   "otpLabel": "OTP",
   "verifyContinue": "Verify & continue",
   "enter6Digit": "Enter the 6-digit code",
   "verificationFailed": "Verification failed",
-
   "bookTitle": "Book — {service}",
   "@bookTitle": {
-    "placeholders": { "service": { "type": "String" } }
+    "placeholders": {
+      "service": {
+        "type": "String"
+      }
+    }
   },
   "collection": "Collection",
   "dropAtShop": "Drop at shop",
@@ -58,17 +65,18 @@
   "quoteFailed": "Quote failed",
   "setupProfileFirst": "Set up your customer profile via the admin portal first.",
   "failedPlaceOrder": "Failed to place order",
-
   "myOrdersTitle": "My orders",
   "noOrders": "No orders yet — book your first service.",
   "errorWithMessage": "Error: {message}",
   "@errorWithMessage": {
-    "placeholders": { "message": { "type": "String" } }
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
   },
-
   "orderTitle": "Order",
   "timeline": "Timeline",
-
   "settings": "Settings",
   "appearance": "Appearance",
   "theme": "Theme",
@@ -88,20 +96,68 @@
   "languageSystem": "System default",
   "resetDefaults": "Reset to defaults",
   "settingsSaved": "Settings saved",
-
   "accentBlue": "Blue",
   "accentTeal": "Teal",
   "accentGreen": "Green",
   "accentPurple": "Purple",
   "accentOrange": "Orange",
   "accentPink": "Pink",
-
   "bgDefault": "Default",
   "bgWhite": "White",
   "bgWarm": "Warm",
   "bgMint": "Mint",
   "bgLavender": "Lavender",
-
   "langEnglish": "English",
-  "langMarathi": "मराठी"
+  "langMarathi": "मराठी",
+  "newOrder": "New order",
+  "noOrdersHint": "Your orders will appear here once you place one.",
+  "trackOrder": "Track order",
+  "trackingTitle": "Order tracking",
+  "yourOrder": "Your order",
+  "moreCount": "{count} more",
+  "@moreCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pickup": "Pickup",
+  "orderDelivery": "Delivery",
+  "collectedItems": "{count} item(s) collected",
+  "@collectedItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "partnerOnWay": "{name} is on the way",
+  "@partnerOnWay": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "callPartner": "Call",
+  "viewReceipt": "View receipt",
+  "downloadReceipt": "Download receipt",
+  "orderCancelled": "This order was cancelled.",
+  "somethingWrong": "Something went wrong",
+  "tryAgain": "Try again",
+  "refresh": "Refresh",
+  "chooseItems": "Choose items",
+  "howToStart": "How should we start?",
+  "howToReturn": "How should we return it?",
+  "expressHint": "Ready faster, +25%",
+  "whereAndWhen": "Where & when",
+  "yourSociety": "Your society",
+  "selectSociety": "Select your society",
+  "noSocietiesHint": "No delivery areas are set up yet. Choose drop at shop for now.",
+  "noSlotsThatDay": "No slots available that day — try another date.",
+  "addItemsFirst": "Add at least one item.",
+  "chooseSocietyFirst": "Choose your society.",
+  "choosePickupSlot": "Choose a pickup slot.",
+  "chooseDeliverySlot": "Choose a delivery slot."
 }

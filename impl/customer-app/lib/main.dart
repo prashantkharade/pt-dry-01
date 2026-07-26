@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'app/app.dart';
 import 'core/api/api_client.dart';
 import 'core/auth/auth_store.dart';
+import 'core/push/push_service.dart';
 import 'core/settings/settings_store.dart';
 
 Future<void> main() async {
@@ -29,9 +32,12 @@ Future<void> main() async {
     'NOTIFICATIONS_BASE',
     defaultValue: 'http://10.0.2.2:4005',
   );
+  // Must match API_KEY_CUSTOMER_APP in the services' env, or every request is
+  // rejected with 401 — the backend validates this key on every route.
+  // Convention is <client>-dev-key for local development.
   const apiKey = String.fromEnvironment(
     'API_KEY',
-    defaultValue: 'dev-customer-app-key',
+    defaultValue: 'customer-app-dev-key',
   );
 
   ApiClient.configure(
@@ -44,6 +50,15 @@ Future<void> main() async {
   );
   await SettingsStore.instance.loadFromDisk();
   await AuthStore.instance.loadFromDisk();
+
+  // Bring push up. No-ops when Firebase isn't configured for this build, so
+  // the app stays fully usable without google-services.json.
+  await PushService.instance.init();
+  // Already signed in from a previous run: refresh the device registration so
+  // a token that rotated while the app was closed is picked up.
+  if (AuthStore.instance.isAuthenticated) {
+    unawaited(PushService.instance.register());
+  }
 
   runApp(const PtKharadeApp());
 }

@@ -56,6 +56,23 @@ export class Order {
     @Column({ name: 'DeliveryAddressId', type: 'uuid', nullable: true })
     DeliveryAddressId: string;
 
+    //Which society the address sits in. Resolves the order to a delivery zone
+    //(and therefore to the partners who can reach it) by FK rather than by
+    //string-matching the society name, which is what the reference did.
+    @Column({ name: 'SocietyId', type: 'uuid', nullable: true })
+    SocietyId: string;
+
+    //  The two legs. Laundry is collect -> process -> return, so an order can
+    //  hold a seat in two different slots on two different dates.
+    //  Null is meaningful, and differs per leg:
+    //    PickupSlotBookingId   null => Channel is DropAtShop (customer brings it in)
+    //    DeliverySlotBookingId null => DeliveryType is CustomerPickup (collects it)
+    @Column({ name: 'PickupSlotBookingId', type: 'uuid', nullable: true })
+    PickupSlotBookingId: string;
+
+    @Column({ name: 'DeliverySlotBookingId', type: 'uuid', nullable: true })
+    DeliverySlotBookingId: string;
+
     @Column({ name: 'SubtotalInr', type: 'numeric', precision: 15, scale: 2, default: 0 })
     SubtotalInr: string;
 

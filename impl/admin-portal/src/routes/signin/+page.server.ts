@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { randomUUID } from 'node:crypto';
 import type { Actions, PageServerLoad } from './$types';
-import { COOKIE_NAME, SessionStore } from '$lib/session';
+import { COOKIE_NAME, SESSION_TTL_SEC, SessionStore } from '$lib/session';
 import { Identity } from '$lib/server/backend';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -20,7 +20,7 @@ export const actions: Actions = {
       const result = await Identity.login(emailOrPhone, password);
       const sessionId = randomUUID();
       const u = result.User as Record<string, unknown>;
-      SessionStore.set(sessionId, {
+      await SessionStore.set(sessionId, {
         userId: String(u.id),
         firstName: String(u.FirstName ?? ''),
         lastName: u.LastName as string | undefined,
@@ -38,7 +38,8 @@ export const actions: Actions = {
         httpOnly: true,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
-        maxAge: Number(process.env.SESSION_TTL_SEC ?? 3600),
+        //Same TTL as the Redis record, so cookie and session expire together.
+        maxAge: SESSION_TTL_SEC,
       });
     } catch (e) {
       const err = e as { message?: string };

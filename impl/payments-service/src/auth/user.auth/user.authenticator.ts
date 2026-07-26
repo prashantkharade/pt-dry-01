@@ -8,7 +8,13 @@ import { ConfigurationManager } from '../../config/configuration.manager';
 
 /////////////////////////////////////////////////////////////////////////
 //  Bearer-token verifier — every sister service shares the same JWT
-//  secret. The identity-service is the only issuer.
+//  secret. identity-service is the only issuer.
+//
+//  AllowAnonymous means "a user token is not REQUIRED", not "ignore any
+//  token that is present". A route can legitimately be reached both by a
+//  service firing a domain event (no user) and by a signed-in human, and
+//  it needs to know which. So on an anonymous route we still parse a token
+//  when one is offered — we just don't demand one.
 /////////////////////////////////////////////////////////////////////////
 
 interface RawPayload {
@@ -22,12 +28,16 @@ interface RawPayload {
 
 export function userAuthenticator(options?: Partial<AuthOptions>) {
     return (req: express.Request, _res: express.Response, next: express.NextFunction): void => {
-        if (options?.AllowAnonymous) return next();
+        const header    = req.headers.authorization;
+        const hasToken  = Boolean(header?.startsWith('Bearer '));
+        const anonymous = Boolean(options?.AllowAnonymous);
 
-        const header = req.headers.authorization;
-        if (!header || !header.startsWith('Bearer ')) {
+        if (!hasToken) {
+            //No token: fine on an anonymous route, fatal otherwise.
+            if (anonymous) return next();
             return next(new ApiError('Missing bearer token', HttpStatusCodes.UNAUTHORIZED));
         }
+
         const token = header.slice('Bearer '.length).trim();
         try {
             const payload = jwt.verify(token, ConfigurationManager.getEnv('JWT_SECRET')) as RawPayload;
@@ -50,6 +60,10 @@ export function userAuthenticator(options?: Partial<AuthOptions>) {
             }
             return next();
         } catch (e: any) {
+            //A token that was OFFERED and is bad is always an error, even on an
+            //anonymous route. Silently ignoring it would let an expired session
+            //fall through and act as an anonymous caller — surprising, and it
+            //hides the real problem from the client.
             return next(new ApiError('Invalid token', HttpStatusCodes.UNAUTHORIZED, { reason: e?.message }));
         }
     };

@@ -1,5 +1,7 @@
 import express from 'express';
 import { register as registerOrderRoutes } from '../api/orders/order.routes';
+import { register as registerDeliveryRoutes } from '../api/delivery/delivery.routes';
+import { register as registerReceiptRoutes } from '../api/receipts/receipt.routes';
 import { ConfigurationManager } from '../config/configuration.manager';
 
 export class Router {
@@ -21,6 +23,8 @@ export class Router {
         });
 
         registerOrderRoutes(this._app);
+        registerDeliveryRoutes(this._app);
+        registerReceiptRoutes(this._app);
         return true;
     };
 }

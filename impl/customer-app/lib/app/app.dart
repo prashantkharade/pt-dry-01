@@ -9,6 +9,7 @@ import '../features/home/home_screen.dart';
 import '../features/booking/booking_screen.dart';
 import '../features/orders/orders_list_screen.dart';
 import '../features/orders/order_detail_screen.dart';
+import '../features/tracking/tracking_screen.dart';
 import '../features/settings/settings_screen.dart';
 
 class PtKharadeApp extends StatelessWidget {
@@ -59,6 +60,14 @@ class PtKharadeApp extends StatelessWidget {
             '/settings': (_) => const SettingsScreen(),
           },
           onGenerateRoute: (settings) {
+            // Live tracking — the primary destination for an in-progress order.
+            if (settings.name?.startsWith('/track/') ?? false) {
+              final id = settings.name!.substring('/track/'.length);
+              return MaterialPageRoute(
+                builder: (_) => TrackingScreen(orderId: id),
+                settings: settings,
+              );
+            }
             if (settings.name?.startsWith('/orders/') ?? false) {
               final id = settings.name!.substring('/orders/'.length);
               return MaterialPageRoute(

@@ -21,11 +21,23 @@ async function fetchTenant(): Promise<{ TenantId: string; BranchId: string } | n
         const baseUrl  = ConfigurationManager.getEnv('IDENTITY_SERVICE_URL', 'http://localhost:4001');
         const email    = ConfigurationManager.getEnv('SEED_ADMIN_EMAIL'    , 'admin@ptkharade.in');
         const password = ConfigurationManager.getEnv('SEED_ADMIN_PASSWORD' , 'Admin@12345');
-        const res      = await axios.post(`${baseUrl}/api/v1/auth/login`, { EmailOrPhone: email, Password: password }, { timeout: 5000 });
+        //Every identity-service route — login included — requires a registered
+        //client key. "Anonymous" means no USER, not no CLIENT.
+        const apiKey   = ConfigurationManager.getEnv('API_KEY_CATALOG_PRICING_SERVICE', 'catalog-pricing-service-dev-key');
+        const res      = await axios.post(
+            `${baseUrl}/api/v1/auth/login`,
+            { EmailOrPhone: email, Password: password },
+            { timeout: 5000, headers: { 'x-api-key': apiKey } },
+        );
         const user     = res.data?.Data?.User;
         if (!user) return null;
         return { TenantId: user.TenantId, BranchId: user.BranchId };
-    } catch {
+    } catch (error: any) {
+        //Log the reason. A bare `catch { return null }` here reports every
+        //failure as "unreachable", which sends you looking at the network when
+        //the truth is a 401 from a missing or wrong client key.
+        const status = error?.response?.status;
+        if (status) logger.warn(`catalog-pricing.seeder: identity-service rejected login (HTTP ${status}) — ${error?.response?.data?.Message ?? ''}`);
         return null;
     }
 }

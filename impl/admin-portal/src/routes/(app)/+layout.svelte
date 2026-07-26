@@ -6,15 +6,33 @@
   let { children, data } = $props();
   const user = $derived(data.sessionUser);
 
-  onMount(() => loadSettings());
+  onMount(() => {
+    loadSettings();
+    // Register for background push if Firebase is configured. No-op otherwise,
+    // and it never prompts unless the operator has set it up. Dynamic import
+    // so the firebase SDK isn't in the initial bundle for a feature most
+    // deployments won't enable.
+    import('$lib/push').then((m) => m.registerWebPush()).catch(() => {});
+  });
 
-  const nav = [
-    { href: '/dashboard', key: 'nav.dashboard' },
-    { href: '/orders', key: 'nav.orders' },
-    { href: '/orders/new', key: 'nav.newOrder' },
-    { href: '/customers', key: 'nav.customers' },
+  const has = (role: string) => user?.roles?.includes(role) ?? false;
+  const isOps = $derived(has('SystemAdmin') || has('Receptionist'));
+
+  //  The portal is shared by three very different jobs. Show each role only
+  //  what it can actually use — a delivery partner has no business seeing an
+  //  order-intake form, and every ops page would 403 for them anyway.
+  //  This is presentation only: the server enforces the real boundaries.
+  const nav = $derived([
+    ...(isOps ? [
+      { href: '/dashboard', key: 'nav.dashboard' },
+      { href: '/orders', key: 'nav.orders' },
+      { href: '/orders/new', key: 'nav.newOrder' },
+      { href: '/customers', key: 'nav.customers' },
+      { href: '/delivery', key: 'nav.delivery' },
+    ] : []),
+    ...(has('DeliveryPartner') ? [{ href: '/my-runs', key: 'nav.myRuns' }] : []),
     { href: '/settings', key: 'nav.settings' },
-  ];
+  ]);
 </script>
 
 <div class="shell">

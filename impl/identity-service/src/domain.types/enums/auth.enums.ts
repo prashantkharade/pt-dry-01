@@ -26,10 +26,12 @@ export enum ActionScope {
 }
 
 export enum RoleType {
-    SystemAdmin  = 'SystemAdmin',
-    Receptionist = 'Receptionist',
-    Customer     = 'Customer',
-    Vendor       = 'Vendor',
+    SystemAdmin     = 'SystemAdmin',
+    Receptionist    = 'Receptionist',
+    Customer        = 'Customer',
+    Vendor          = 'Vendor',
+    //Pickup/drop staff. Signs in to the admin portal; scoped to their own runs.
+    DeliveryPartner = 'DeliveryPartner',
 }
 
 export interface AuthOptions {
@@ -39,6 +41,16 @@ export interface AuthOptions {
     RequestType       : RequestType;
     AllowAnonymous?   : boolean;
     AllowedRoles?     : string[];
+    /**
+     * Restrict a route to specific client apps by ClientCode, e.g.
+     * `['NOTIFICATIONS-SERVICE']`. Use for service-to-service endpoints that
+     * run without a user token: `AllowAnonymous` alone would open them to
+     * every holder of a valid key, including the customer app.
+     *
+     * Omitted means any registered client may call (subject to the user
+     * checks that follow).
+     */
+    AllowedClients?   : string[];
     CustomAuthFn?     : string;
 }
 

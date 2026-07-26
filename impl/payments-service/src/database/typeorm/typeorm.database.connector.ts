@@ -5,6 +5,9 @@ import { DatabaseConfigProvider, DatabaseConfig } from '../database.config';
 import { logger }            from '../../logger/logger';
 import { Payment } from './models/payment.model';
 import { WebhookEvent } from './models/webhook.event.model';
+import { Wallet } from './models/wallet.model';
+import { WalletTransaction } from './models/wallet.transaction.model';
+import { Refund } from './models/refund.model';
 
 /////////////////////////////////////////////////////////////////////////
 //  TypeORM DataSource singleton. Dialect (postgres / mysql / sqlite) is
@@ -15,7 +18,7 @@ import { WebhookEvent } from './models/webhook.event.model';
 //  database is auto-created if missing (postgres & mysql).
 /////////////////////////////////////////////////////////////////////////
 
-const ENTITIES = [Payment, WebhookEvent];
+const ENTITIES = [Payment, WebhookEvent, Wallet, WalletTransaction, Refund];
 
 let _source: DataSource | null = null;
 
